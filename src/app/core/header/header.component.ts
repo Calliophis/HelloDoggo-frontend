@@ -43,4 +43,8 @@ export class HeaderComponent {
       url: '/contact'
     }
   ]
+
+  onLogin() {
+    this.router.navigateByUrl('/auth/login')
+  }
 }
