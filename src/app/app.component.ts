@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
+import { HeaderComponent } from './core/header/header.component';
 
 @Component({
   selector: 'app-root',

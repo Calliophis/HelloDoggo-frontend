@@ -1,0 +1,34 @@
+<img 
+src="photo-1543466835-00a7907e9de1.jpg" 
+alt="dog-photo-banner"
+class="w-full h-60 object-cover object-[center_30%]"
+>
+
+<header class="sticky top-0 flex items-center gap-2 text-black bg-white px-8 mt-3 font-[Rubik]">
+    
+    <h1 class="text-primary font-semibold text-4xl w-1/5">Hello Doggo</h1>
+    
+    <nav class="w-4/5 flex items-center justify-around gap-12">
+        
+        @for (headerLink of headerLinks; track $index) {
+            <app-header-link [url]="headerLink.url">{{ headerLink.text }}</app-header-link>
+        }
+
+        <p-inputgroup class="flex max-w-1/6">
+            <input 
+            pInputText 
+            type="text" 
+            id="search"
+            placeholder="Search" 
+            class="w-full rounded-r-none">
+            <p-inputgroup-addon>
+                <p-button icon="pi pi-search" aria-label="search" severity="secondary" />
+            </p-inputgroup-addon>
+        </p-inputgroup>
+        
+        <div class="flex gap-2">
+            <p-button>Sign up</p-button>
+            <p-button severity="secondary">Log in</p-button>
+        </div>
+    </nav>
+</header>
