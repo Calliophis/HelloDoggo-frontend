@@ -47,4 +47,8 @@ export class HeaderComponent {
   onLogin() {
     this.router.navigateByUrl('/auth/login')
   }
+
+  onSignup() {
+    this.router.navigateByUrl('auth/signup')
+  }
 }
