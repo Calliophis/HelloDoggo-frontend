@@ -5,6 +5,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { Router } from '@angular/router';
 import { HeaderLinkComponent } from '../header-link/header-link.component';
+import { AuthService } from '../auth/service/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -20,6 +21,9 @@ import { HeaderLinkComponent } from '../header-link/header-link.component';
 export class HeaderComponent {
 
   private router = inject(Router);
+  private authService = inject(AuthService);
+
+  isAuthenticated = this.authService.isAuthenticated;
 
   headerLinks = [
     {
@@ -50,5 +54,10 @@ export class HeaderComponent {
 
   onSignup() {
     this.router.navigateByUrl('auth/signup')
+  }
+
+  onLogout() {
+    this.authService.logout();
+    this.router.navigateByUrl('');
   }
 }

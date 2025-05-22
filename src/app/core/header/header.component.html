@@ -26,9 +26,18 @@ class="w-full h-60 object-cover object-[center_30%]"
             </p-inputgroup-addon>
         </p-inputgroup>
         
-        <div class="flex gap-2">
+        
+        @if (!isAuthenticated()) {
+            <div class="flex gap-2">
             <p-button (click)="onSignup()">Sign up</p-button>
             <p-button severity="secondary" (click)="onLogin()">Log in</p-button>
-        </div>
+            </div>
+        }
+        @else {
+            <div class="flex items-center justify-around gap-12">
+            <app-header-link url="/user/me">My profile</app-header-link>
+            <p-button severity="secondary" (click)="onLogout()">Log out</p-button>
+            </div>
+        }  
     </nav>
 </header>

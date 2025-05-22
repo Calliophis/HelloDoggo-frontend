@@ -9,6 +9,7 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
 import { AuthService } from '../service/auth.service';
+import { Router } from '@angular/router';
 
 interface LoginForm {  email: FormControl<string | null>;  password: FormControl<string | null>;}
 
@@ -30,6 +31,7 @@ interface LoginForm {  email: FormControl<string | null>;  password: FormControl
 export class LoginComponent {
 
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   loginForm: FormGroup = new FormGroup<LoginForm>({
     email: new FormControl('', { validators: [Validators.email, Validators.required] }),
@@ -62,6 +64,7 @@ export class LoginComponent {
     return this.authService.login(this.loginForm.value).subscribe({
       next: () => {
         this.successMessage.set('Successfully logged in');
+        setTimeout(() => this.router.navigateByUrl('/user/me'), 400)
       },
       error: (err) => {
         if (err.status === 401) {
