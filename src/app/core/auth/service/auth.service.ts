@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { Observable, switchMap, tap } from 'rxjs';
 import { LoginDto } from '../dto/login.dto';
 import { SignupDto } from '../dto/signup.dto';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,24 @@ import { SignupDto } from '../dto/signup.dto';
 export class AuthService {
 
   private http = inject(HttpClient);
-  isAuthenticated = signal<boolean>(!!localStorage.getItem('access_token'));
+  private router = inject(Router);
+  isAuthenticated = computed<boolean>(() => !!this.token());
+  token = signal<string | null>(null);
 
-  signup(user: SignupDto) {
+  init(): void {
+    this.updateToken();
+  }
+
+  signup(user: SignupDto): Observable<Object> {
     return this.http.post('http://localhost:3000/auth/signup', user).pipe(
-      tap(res => console.log(res))
+      switchMap(() => {
+        const loginUser: LoginDto = {
+          email: user.email,
+          password: user.password
+        }
+        
+        return this.login(loginUser);
+      })
     )
   }
 
@@ -22,22 +36,19 @@ export class AuthService {
     return this.http.post<{ access_token: string }>('http://localhost:3000/auth/login', user).pipe(
       tap(res => {
         localStorage.setItem('access_token', res.access_token);
-        this.isAuthenticated.set(true);
+        this.updateToken();
       })
     );
   }
 
   logout(): void {
     localStorage.removeItem('access_token');
-    this.isAuthenticated.set(false);
+    this.updateToken();
+    this.router.navigateByUrl('/auth/login');
   }
 
-  getToken(): string | null {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      return token;      
-    }
-    return null;
+  private updateToken(): void {
+    this.token.set(localStorage.getItem('access_token'));
   }
   
 }

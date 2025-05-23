@@ -1,11 +1,11 @@
-import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { catchError, Observable, throwError } from "rxjs";
 import { AuthService } from "./service/auth.service";
 
 export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
     const authService = inject(AuthService)
-    const token = authService.getToken();
+    const token = authService.token();
 
     let newReq = req.clone();
 
@@ -14,8 +14,12 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn):
     }
 
     return next(newReq).pipe(
-        catchError((error: any) => {
-            
+        catchError((error: HttpErrorResponse) => {
+            if (error) {
+                if (error.error.message === 'Incorrect token') {
+                    authService.logout();
+                }
+            }
             return throwError(() => error);
         })
     );

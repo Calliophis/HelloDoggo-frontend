@@ -23,6 +23,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.primeng.ripple.set(true);
-    this.authService.getToken();
+    this.authService.init();
   }
 }

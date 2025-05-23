@@ -20,11 +20,9 @@ export class ProfileComponent {
   user = signal<User | null>(null);
 
   constructor() {
-    afterNextRender(() => {
       this.http.get<User>('http://localhost:3000/user/me').pipe(
         tap(res => this.user.set(res))
       ).subscribe()
-    })
   }
  
   onUpdateProfile() {

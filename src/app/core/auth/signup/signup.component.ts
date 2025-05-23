@@ -14,6 +14,7 @@ import { PasswordInputComponent } from '../password-input/password-input.compone
 import { confirmPasswordValidator } from '../../../shared/validators/confirm-password.validator';
 import { SignupForm } from '../../../shared/models/signup-form.model';
 import { SignupDto } from '../dto/signup.dto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -35,6 +36,7 @@ import { SignupDto } from '../dto/signup.dto';
 export class SignupComponent {
 
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   strongPasswordRegex: RegExp = /^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\D*\d).{8,}$/;
 
@@ -99,6 +101,7 @@ export class SignupComponent {
     return this.authService.signup(this.filteredForm()).subscribe({
       next: () => {
         this.successMessage.set('Account created');
+        setTimeout(() => this.router.navigateByUrl('/user/me'), 400);
       },
       error: (err) => {
         if (err.status === 401) {
