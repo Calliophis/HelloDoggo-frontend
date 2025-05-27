@@ -69,7 +69,7 @@
             }
         </div>
 
-        <p-button type="submit">Submit</p-button>
+        <p-button type="submit" [loading]="isLoading()">Submit</p-button>
         @if (errorMessage()) {
             <p-message severity="error">{{ errorMessage() }}</p-message>
         }

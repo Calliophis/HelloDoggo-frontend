@@ -2,8 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
@@ -19,17 +17,15 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-signup',
   imports: [
-    CardModule,
+    PasswordInputComponent,
     ReactiveFormsModule,
     FloatLabelModule,
-    IconFieldModule,
-    InputIconModule,
     InputTextModule,
     PasswordModule,
-    ButtonModule,
     MessageModule,
-    PasswordInputComponent,
-    FormsModule
+    ButtonModule,
+    FormsModule,
+    CardModule, 
   ],
   templateUrl: './signup.component.html'
 })
@@ -69,8 +65,11 @@ export class SignupComponent {
   }
 
   hasBeenSubmitted = signal<boolean>(false);
+  isLoading = signal<boolean>(false);
+
   errorMessage = signal<string | null>(null);
   successMessage = signal<string |null>(null);
+
   filteredForm = signal<SignupDto>({
     firstName: '',
     lastName: '',
@@ -84,26 +83,32 @@ export class SignupComponent {
     this.successMessage.set(null);
     this.hasBeenSubmitted.set(true);
     this.signupForm.markAllAsTouched();
+    this.signupForm.disable();
+    this.isLoading.set(true);
 
     if (this.signupForm.invalid) {
       return;
     }
 
     this.filteredForm.set(
-{
-      firstName: this.signupForm.value.firstName,
-      lastName: this.signupForm.value.lastName,
-      email: this.signupForm.value.email,
-      password: this.signupForm.value.password
-    }
+      {
+        firstName: this.signupForm.value.firstName,
+        lastName: this.signupForm.value.lastName,
+        email: this.signupForm.value.email,
+        password: this.signupForm.value.password
+      }
     )
     
     return this.authService.signup(this.filteredForm()).subscribe({
       next: () => {
         this.successMessage.set('Account created');
-        setTimeout(() => this.router.navigateByUrl('/user/me'), 400);
+        setTimeout(() => {
+          this.isLoading.set(false);
+          this.router.navigateByUrl('/user/me');
+        }, 1000);
       },
       error: (err) => {
+        this.signupForm.enable();
         if (err.status === 401) {
           this.errorMessage.set('This email is already used')
         } else {

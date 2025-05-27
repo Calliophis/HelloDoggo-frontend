@@ -1,30 +1,33 @@
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CardModule } from 'primeng/card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { AuthService } from '../service/auth.service';
 import { Router } from '@angular/router';
+
 
 interface LoginForm {  email: FormControl<string | null>;  password: FormControl<string | null>;}
 
 @Component({
   selector: 'app-login',
   imports: [
-    CardModule,
+    ProgressSpinnerModule,
     ReactiveFormsModule,
     FloatLabelModule,
-    IconFieldModule,
-    InputIconModule,
     InputTextModule,
+    InputIconModule,
+    IconFieldModule,
     PasswordModule,
+    MessageModule,
     ButtonModule,
-    MessageModule
+    CardModule
   ],
   templateUrl: './login.component.html'
 })
@@ -47,6 +50,7 @@ export class LoginComponent {
   }
 
   hasBeenSubmitted = signal<boolean>(false);
+  isLoading = signal<boolean>(false);
 
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
@@ -56,6 +60,8 @@ export class LoginComponent {
     this.successMessage.set(null);
     this.hasBeenSubmitted.set(true);
     this.loginForm.markAllAsTouched();
+    this.loginForm.disable();
+    this.isLoading.set(true);
 
     if (this.loginForm.invalid) {
       return;
@@ -64,9 +70,14 @@ export class LoginComponent {
     return this.authService.login(this.loginForm.value).subscribe({
       next: () => {
         this.successMessage.set('Successfully logged in');
-        setTimeout(() => this.router.navigateByUrl('/user/me'), 400)
+        setTimeout(() => {
+          this.isLoading.set(false);
+          this.router.navigateByUrl('/user/me');
+        }, 1000
+        )
       },
       error: (err) => {
+        this.loginForm.enable();
         if (err.status === 401) {
           this.errorMessage.set('Incorrect email or password');
         } else {
