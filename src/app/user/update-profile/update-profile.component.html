@@ -1,0 +1,82 @@
+<p-card header="Update my information" class="flex justify-center gap-3 m-20">
+    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()" class="flex flex-col justify-center items-center gap-4">
+        <div class="flex flex-col justify-end gap-2">
+            <div class="flex flex-col items-end">
+                <fieldset class="flex items-center gap-2">
+                    <label for="firstName">First name: </label>
+                    <input 
+                        pInputText 
+                        formControlName="firstName" 
+                        id="firstName"
+                        placeholder="{{ user()?.firstName }}" 
+                        autocomplete="off" 
+                        class="w-60"/>
+                </fieldset>
+                @if (hasBeenSubmitted() && updateForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(firstName) }}</p-message>
+                }
+            </div>
+        
+            <div class="flex flex-col items-end">
+                <fieldset class="flex items-center gap-2">
+                    <label for="lastName">Last name: </label>
+                    <input 
+                        pInputText 
+                        formControlName="lastName" 
+                        id="lastName"
+                        placeholder="{{ user()?.lastName }}" 
+                        autocomplete="off" 
+                        class="w-60"/>
+                </fieldset>
+                @if (hasBeenSubmitted() && updateForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(lastName) }}</p-message>
+                }
+            </div>
+        
+            <div class="flex flex-col items-end">
+                <fieldset class="flex items-center gap-2">
+                    <label for="email">Email: </label>
+                    <input 
+                        pInputText 
+                        formControlName="email" 
+                        id="email"
+                        placeholder="{{ user()?.email }}" 
+                        autocomplete="off" 
+                        class="w-60"/>
+                </fieldset>
+                @if (hasBeenSubmitted() && updateForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(email) }}</p-message>
+                }
+            </div>
+
+            <div class="flex flex-col items-end">
+                <fieldset class="flex items-center gap-2">
+                    <label for="password">Password: </label>
+                    <app-password-input formControlName="password" id="password" hasFeedback></app-password-input>
+                </fieldset>
+                
+                @if (hasBeenSubmitted() && updateForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(password) }}</p-message>
+                }
+            </div>
+
+            <div class="flex flex-col items-end">
+                <fieldset class="flex items-center gap-2">
+                    <label for="confirmPassword">Confirm password: </label>
+                    <app-password-input formControlName="confirmPassword" id="confirmPassword" label="Confirm password"></app-password-input>
+                </fieldset>
+                
+                @if (hasBeenSubmitted() && updateForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm) }}</p-message>
+                }
+            </div>
+        </div>
+        <p-button type="submit">Submit</p-button>
+        @if (errorMessage()) {
+            <p-message severity="error">{{ errorMessage() }}</p-message>
+        }
+        @if (successMessage()) {
+            <p-message severity="success">{{ successMessage() }}</p-message>
+        }
+    </form>
+</p-card>

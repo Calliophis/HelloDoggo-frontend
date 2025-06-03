@@ -16,7 +16,6 @@ import { UserService } from '../service/user.service';
 })
 export class ProfileComponent {
   
-  private http = inject(HttpClient);
   private router = inject(Router);
   private userService = inject(UserService);
 
@@ -24,10 +23,12 @@ export class ProfileComponent {
 
   constructor() {
     this.userService.getUser().pipe(
-        tap(res => this.user.set(res))
-      ).subscribe()
+      tap(res => this.user.set(res))
+    ).subscribe()
+  }
+
+  onUpdateProfile() {
+    this.router.navigateByUrl('/user/me/update')
   }
  
-  onUpdateProfile() {
-  }
 }
