@@ -109,6 +109,7 @@ export class SignupComponent {
       },
       error: (err) => {
         this.signupForm.enable();
+        this.isLoading.set(false);
         if (err.status === 401) {
           this.errorMessage.set('This email is already used')
         } else {

@@ -32,6 +32,7 @@ import { CommonModule } from '@angular/common';
 })
 export class PasswordInputComponent implements ControlValueAccessor, Validator {
   hasFeedback = input<boolean, string | boolean>(false, { transform: booleanAttribute });
+  label = input<string>('Password');
 
   password: string = '';
   rules = passwordRules;
@@ -57,7 +58,8 @@ export class PasswordInputComponent implements ControlValueAccessor, Validator {
   }
 
   validate(control: AbstractControl): ValidationErrors | null {
-    if(!this.hasFeedback()) return null;
+    if (!this.hasFeedback()) return null;
+    if (control.pristine) return null;
 
     const value = control.value || '';
     const failedRules = passwordRules.filter(rule => !rule.check(value)).map(rule => rule.key);

@@ -63,7 +63,7 @@
         </div>
 
         <div class="flex flex-col items-end">
-            <app-password-input formControlName="confirmPassword"></app-password-input>
+            <app-password-input formControlName="confirmPassword" label="Confirm password"></app-password-input>
             @if (hasBeenSubmitted() && signupForm.invalid) {
                 <p-message severity="error" variant="simple" size="small">{{ getErrorText(signupForm) }}</p-message>
             }

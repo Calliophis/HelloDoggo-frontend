@@ -1,5 +1,40 @@
-<p>First name: {{ user()?.firstName }}</p>
-<p>Last name: {{ user()?.lastName }}</p>
-<p>Email: {{ user()?.email }}</p>
+<main class="flex flex-col justify-center items-center gap-1">
+    <h1 class="text-2xl m-10 font-semibold">Hi {{ user()?.firstName }}!</h1>
+    <p-card header="My information" >
+        <div class="flex flex-col justify-center items-center gap-5">
+            <div class="flex flex-col gap-4">
+                <p>
+                    <span class="font-semibold">
+                        First name: 
+                    </span>
+                    <span>
+                        {{ user()?.firstName }}
+                    </span>
+                </p>
+                <p>
+                    <span class="font-semibold">
+                        Last name: 
+                    </span>
+                    <span>
+                        {{ user()?.lastName }}
+                    </span>
+                </p>
+                <p>
+                    <span class="font-semibold">
+                        Email: 
+                    </span>
+                    <span>
+                        {{ user()?.email }}
+                    </span>
+                </p>
+            
+            </div>
+            
+            <p-button (click)="onUpdateProfile()">Update my profile</p-button>
+        
+        </div>
+    </p-card>
+</main>
 
-<p-button (click)="onUpdateProfile()">Update my profile</p-button>
+
+

@@ -73,11 +73,11 @@ export class LoginComponent {
         setTimeout(() => {
           this.isLoading.set(false);
           this.router.navigateByUrl('/user/me');
-        }, 1000
-        )
+        }, 1000)
       },
       error: (err) => {
         this.loginForm.enable();
+        this.isLoading.set(false);
         if (err.status === 401) {
           this.errorMessage.set('Incorrect email or password');
         } else {
