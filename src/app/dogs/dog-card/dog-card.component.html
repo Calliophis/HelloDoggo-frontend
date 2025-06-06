@@ -1,0 +1,35 @@
+<p-card class="flex justify-center m-5 w-[400px] h-[450px] relative">
+    
+    <ng-template #header>
+        <div class=" flex justify-center items-center w-full h-[250px] overflow-hidden rounded-t-xl">
+            <img 
+                alt="happy pupper" 
+                class="w-full object-cover" 
+                [src]="'http://localhost:3000' + dog()?.img_url">
+        </div>
+        
+    </ng-template>
+    
+    <ng-template #title>{{ dog()?.name }}</ng-template>
+    
+    <ng-template #subtitle>
+        <span>
+            {{ dog()?.breed }}
+        </span>
+        @if (dog()?.sex === 'male') {
+             <i class="pi pi-mars"></i>
+        }
+        @if (dog()?.sex === 'female') {
+            <i class="pi pi-venus"></i>
+        }
+    </ng-template>
+    
+    <p class="w-full">{{ dog()?.description }}</p>
+    
+    <ng-template #footer>
+        <div class="absolute bottom-3 inset-x-0 flex gap-4 mt-1 justify-center">
+            <p-button label="Adopt"/>
+        </div>
+    
+    </ng-template>
+</p-card>

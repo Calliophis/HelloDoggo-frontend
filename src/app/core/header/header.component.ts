@@ -32,7 +32,7 @@ export class HeaderComponent {
     },
     {
       text: 'Adopt',
-      url: '/dogs'
+      url: '/dog/all'
     },
     {
       text: 'Volunteer',

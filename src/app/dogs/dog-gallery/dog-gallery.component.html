@@ -1,0 +1,21 @@
+<main class="flex flex-col items-left">
+    <h1 class="ml-30 mt-10 mb-10">
+        <span class="text-4xl font-bold">Behold</span>
+        <br>
+        <span class="text-2xl">our adoptable <span class="text-primary font-bold">puppers</span> and <span class="text-primary font-bold">doggos</span></span>
+    </h1>
+
+    <div class="flex flex-wrap justify-center">
+        @if (isLoading()) {
+        <p-progress-spinner></p-progress-spinner>
+    } @else {
+            @for (dog of dogs(); track dog.id) {
+            <app-dog-card [dog]="dog"></app-dog-card>
+        }
+    }
+    </div>
+    
+</main>
+    
+
+

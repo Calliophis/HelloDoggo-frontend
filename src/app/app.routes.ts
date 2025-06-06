@@ -21,6 +21,10 @@ export const routes: Routes = [
         loadComponent: () => import('./user/update-profile/update-profile.component').then(c => c.UpdateProfileComponent)
     },
     {
+        path: 'dog/all',
+        loadComponent: () => import('./dogs/dog-gallery/dog-gallery.component').then(c => c.DogGalleryComponent)
+    },
+    {
         path: '*',
         redirectTo: ''
     }
