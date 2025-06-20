@@ -13,12 +13,8 @@ export const routes: Routes = [
     },
     {
         path: 'user/me',
-        loadComponent: () => import('./user/profile/profile.component').then(c => c.ProfileComponent),
+        loadComponent: () => import('./user/update-profile/update-profile.component').then(c => c.UpdateProfileComponent),
         canActivate: [authGuard]
-    },
-    {
-        path: 'user/me/update',
-        loadComponent: () => import('./user/update-profile/update-profile.component').then(c => c.UpdateProfileComponent)
     },
     {
         path: 'dog/all',

@@ -13,6 +13,7 @@ import { confirmPasswordValidator } from '../../../shared/validators/confirm-pas
 import { SignupForm } from '../../../shared/models/signup-form.model';
 import { SignupDto } from '../dto/signup.dto';
 import { Router } from '@angular/router';
+import { ErrorMessageService } from '../../../shared/services/error-message.service';
 
 @Component({
   selector: 'app-signup',
@@ -31,6 +32,7 @@ import { Router } from '@angular/router';
 })
 export class SignupComponent {
 
+  private errorMessageService = inject(ErrorMessageService)
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -77,18 +79,22 @@ export class SignupComponent {
     password: ''
   });
   
+  getErrorText(control: AbstractControl | null): string | null {
+   return this.errorMessageService.getErrorText(control);
+  }
 
   onSubmit() {
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
     this.hasBeenSubmitted.set(true);
     this.signupForm.markAllAsTouched();
-    this.signupForm.disable();
-    this.isLoading.set(true);
 
     if (this.signupForm.invalid) {
       return;
     }
+
+    this.isLoading.set(true);
+    this.signupForm.disable();
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     this.filteredForm.set(
       {
@@ -118,33 +124,4 @@ export class SignupComponent {
       }
     });
   }
-
-  getErrorText(control: AbstractControl | null): string | null {
-    if (!control) {
-      return null;
-    }
-
-    if (control.hasError('required')) {
-      return 'This field is required';
-    }
-    
-    if (control.hasError('email')) {
-      return 'Email is not valid';
-    }
-
-    if (control.hasError('isOnlyWhiteSpace')) {
-      return 'This field cannot be white space';
-    }
-
-    if (control.hasError('isWeakPassword')) {
-      return 'Password is too weak';
-    }
-
-    if (control.hasError('passwordDoesNotMatch')) {
-      return 'Password does not match';
-    }
-
-    return null;
-  }
-
 }

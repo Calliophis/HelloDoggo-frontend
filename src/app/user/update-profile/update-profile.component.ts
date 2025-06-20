@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { WhiteSpaceValidator } from '../../shared/validators/white-space.validator';
 import { confirmPasswordValidator } from '../../shared/validators/confirm-password.validator';
-import { HttpClient } from '@angular/common/http';
 import { User } from '../../shared/models/user.model';
 import { tap } from 'rxjs';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -14,6 +13,7 @@ import { MessageModule } from 'primeng/message';
 import { CardModule } from 'primeng/card';
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
+import { ErrorMessageService } from '../../shared/services/error-message.service';
 
 @Component({
   selector: 'app-update-profile',
@@ -32,7 +32,7 @@ import { Router } from '@angular/router';
 })
 export class UpdateProfileComponent {
 
-  private http = inject(HttpClient);
+  private errorMessageService = inject(ErrorMessageService);
   private userService = inject(UserService);
   private router = inject(Router);
 
@@ -71,21 +71,35 @@ export class UpdateProfileComponent {
   }
 
   constructor() {
-    this.http.get<User>('http://localhost:3000/user/me').pipe(
+    this.userService.getUser().pipe(
       tap(res => this.user.set(res)))
       .subscribe()
   }
 
+  getErrorText(control: AbstractControl | null): string | null {
+    return this.errorMessageService.getErrorText(control);
+  }
+
+  filterUpdateForm(): Partial<User> {
+    const formValue = this.updateForm.value;
+    const filteredForm: Partial<User> = Object.fromEntries(
+      Object.entries(formValue).filter(([key, value]) => key !== 'confirmPassword' && value !== null && value !== '')
+    );
+
+    return filteredForm;
+  }
+
   onSubmit() {
-    this.isLoading.set(true);
-    this.updateForm.disable();
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
     this.hasBeenSubmitted.set(true);
 
     if (this.updateForm.invalid) {
       return;
     }
+    
+    this.isLoading.set(true);
+    this.updateForm.disable();
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
     
     const updatedUser = this.filterUpdateForm();
     
@@ -94,7 +108,8 @@ export class UpdateProfileComponent {
         this.successMessage.set('Information updated');
         setTimeout(() => {
           this.isLoading.set(false);
-          this.router.navigateByUrl('/user/me');
+          this.updateForm.enable();
+          this.successMessage.set(null);
         }, 1000);
       },
       error: (err) => {
@@ -108,41 +123,4 @@ export class UpdateProfileComponent {
       }
     });
   }
-
-  getErrorText(control: AbstractControl | null): string | null {
-      if (!control) {
-        return null;
-      }
-  
-      if (control.hasError('required')) {
-        return 'This field is required';
-      }
-      
-      if (control.hasError('email')) {
-        return 'Email is not valid';
-      }
-  
-      if (control.hasError('isOnlyWhiteSpace')) {
-        return 'This field cannot be white space';
-      }
-  
-      if (control.hasError('isWeakPassword')) {
-        return 'Password is too weak';
-      }
-  
-      if (control.hasError('passwordDoesNotMatch')) {
-        return 'Password does not match';
-      }
-  
-      return null;
-    }
-
-    filterUpdateForm(): Partial<User> {
-      const formValue = this.updateForm.value;
-      const filteredForm: Partial<User> = Object.fromEntries(
-        Object.entries(formValue).filter(([key, value]) => key !== 'confirmPassword' && value !== null && value !== '')
-      );
-
-      return filteredForm;
-    }
 }

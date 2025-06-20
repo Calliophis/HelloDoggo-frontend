@@ -72,7 +72,7 @@ export class LoginComponent {
         this.successMessage.set('Successfully logged in');
         setTimeout(() => {
           this.isLoading.set(false);
-          this.router.navigateByUrl('/user/me');
+          window.history.back();
         }, 1000)
       },
       error: (err) => {
@@ -99,7 +99,6 @@ export class LoginComponent {
     if (control.hasError('email')) {
       return 'Invalid email';
     }
-
     return null;
   }
 }
