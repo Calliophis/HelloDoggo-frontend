@@ -1,0 +1,88 @@
+<p-card header="Add a new dog to adopt" class="flex justify-center">
+    <form [formGroup]="createDogForm" (ngSubmit)="onSubmit()" class="flex flex-col justify-center items-start gap-5 m-2"> 
+        <div class="flex flex-col items-end">
+            <fieldset class="flex flex-col justify-center items-start gap-2">
+                <span class="font-semibold">What's their name?</span>
+                <p-floatlabel variant="on" >
+                    <input 
+                        pInputText 
+                        formControlName="name" 
+                        id="name" 
+                        autocomplete="off" 
+                        class="w-75"/>
+                    <label for="name">Name</label> 
+                </p-floatlabel>
+            </fieldset>
+            @if (hasBeenSubmitted() && createDogForm.invalid) {
+                <p-message severity="error" variant="simple" size="small">{{ getErrorText(name) }}</p-message>
+            }
+        </div>
+       
+        <div class="flex flex-col items-end w-full">
+            <fieldset class="flex flex-col justify-center items-start gap-2 w-full">
+                <span class="font-semibold">Good boy or good girl?</span>
+                <div>
+                    <p-radiobutton id="male" value="male" formControlName="sex"></p-radiobutton>
+                    <label for="male" class="ml-2">Male</label>
+                </div>
+                <div>
+                    <p-radiobutton id="female" value="female" formControlName="sex"></p-radiobutton>
+                    <label for="female" class="ml-2">Female</label>
+                </div>
+            </fieldset>
+            @if (hasBeenSubmitted() && createDogForm.invalid) {
+                <p-message severity="error" variant="simple" size="small">{{ getErrorText(sex) }}</p-message>
+            }
+        </div>
+        
+        <div class="flex flex-col items-end">
+            <fieldset class="flex flex-col justify-center items-start gap-2">
+                <span class="font-semibold">What's their breed?</span>
+                <p-floatlabel variant="on" >
+                    <input 
+                        pInputText 
+                        formControlName="breed" 
+                        id="breed" 
+                        autocomplete="off" 
+                        class="w-75"/>
+                    <label for="breed">Breed</label> 
+                </p-floatlabel>
+            </fieldset>
+            @if (hasBeenSubmitted() && createDogForm.invalid) {
+                <p-message severity="error" variant="simple" size="small">{{ getErrorText(breed) }}</p-message>
+            }
+        </div>
+        
+        <div class="flex flex-col items-end">
+            <fieldset class="flex flex-col justify-center items-start gap-2">
+                <span class="font-semibold">Write something about them</span>
+                <p-floatlabel variant="on">
+                    <input 
+                        pInputText 
+                        formControlName="description" 
+                        id="description" 
+                        autocomplete="off" 
+                        class="w-75"/>
+                    <label for="description">Description</label> 
+                </p-floatlabel>
+            </fieldset>
+            @if (hasBeenSubmitted() && createDogForm.invalid) {
+                <p-message severity="error" variant="simple" size="small">{{ getErrorText(description) }}</p-message>
+            }
+        </div>
+        
+        <div class="flex flex-col items-end"> 
+            <app-image-input formControlName="image"></app-image-input>
+        </div>
+        
+        <div class="w-full flex flex-col items-center justify-center">
+            <p-button type="submit" severity="success" [loading]="isLoading()" class="font-semibold m-3">Submit</p-button>
+            @if (errorMessage()) {
+            <p-message severity="error">{{ errorMessage() }}</p-message>
+            }
+            @if (successMessage()) {
+                <p-message severity="success">{{ successMessage() }}</p-message>
+            }
+        </div>
+    </form>
+</p-card>

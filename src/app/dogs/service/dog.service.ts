@@ -15,4 +15,8 @@ export class DogService {
   getAllDogs(): Observable<Dog[]> {
     return this.http.get<Dog[]>('http://localhost:3000/dog/all');
   }
+
+  createDog(newDog: FormData): Observable<any> {
+    return this.http.post('http://localhost:3000/dog/create', newDog);
+  }
 }

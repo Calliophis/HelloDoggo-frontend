@@ -1,0 +1,31 @@
+<fieldset 
+    class="flex flex-col justify-center items-left gap-2 w-full"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+>
+
+    <label for="image" class="font-semibold">Add a picture of them in their best light</label>
+   
+    <div
+    class="flex flex-col gap-2 items-center text-center border-2 border-dashed hover:border-amber-500 rounded-md p-2"
+    [class]="dynamicClasses()"
+    >
+        <p>Drag & drop your image here</p>
+        <p>or</p>
+        <input 
+            type="file"
+            id="image"
+            accept="image/*" 
+            formControlName="image" 
+            (change)="handleInput($event)"
+            class="max-w-75 overflow-hidden focus:outline-1 focus:outline-amber-500 focus:outline-offset-2 focus:rounded-md file:cursor-pointer file:mr-4 file:rounded-md file:border-0 file:p-2 file:bg-primary file:py-2 file:text-white file:text-sm file:font-semibold hover:file:bg-amber-600"
+        />
+
+        @if (previewUrl()) {
+        <div class="mt-2 rounded-md w-40 h-25 overflow-hidden object-cover object-center">
+            <img [src]="previewUrl()" alt="Preview">
+        </div>
+    } 
+    </div>
+</fieldset>

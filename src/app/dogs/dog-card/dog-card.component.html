@@ -3,11 +3,10 @@
     <ng-template #header>
         <div class=" flex justify-center items-center w-full h-[250px] overflow-hidden rounded-t-xl">
             <img 
-                alt="happy pupper" 
+                alt="dog image" 
                 class="w-full object-cover" 
                 [src]="'http://localhost:3000' + dog()?.img_url">
-        </div>
-        
+        </div> 
     </ng-template>
     
     <ng-template #title>{{ dog()?.name }}</ng-template>
