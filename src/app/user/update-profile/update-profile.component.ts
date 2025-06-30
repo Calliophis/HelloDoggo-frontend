@@ -7,13 +7,15 @@ import { tap } from 'rxjs';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { ButtonModule } from 'primeng/button';
-import { PasswordInputComponent } from '../../core/auth/password-input/password-input.component';
 import { MessageModule } from 'primeng/message';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
+import { PasswordInputComponent } from '../../core/auth/password-input/password-input.component';
 import { UserService } from '../service/user.service';
-import { Router } from '@angular/router';
+import { AuthService } from '../../core/auth/service/auth.service';
 import { ErrorMessageService } from '../../shared/services/error-message.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-update-profile',
@@ -25,6 +27,7 @@ import { ErrorMessageService } from '../../shared/services/error-message.service
     PasswordModule,
     MessageModule,
     ButtonModule,
+    DialogModule,
     FormsModule,
     CardModule
   ],
@@ -34,6 +37,7 @@ export class UpdateProfileComponent {
 
   private errorMessageService = inject(ErrorMessageService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   user = signal<User | null>(null);
@@ -41,6 +45,7 @@ export class UpdateProfileComponent {
   isLoading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+  isVisible: boolean = false;
 
   updateForm: FormGroup = new FormGroup({
       firstName: new FormControl('', { validators: [Validators.minLength(2), WhiteSpaceValidator()] }),
@@ -122,5 +127,34 @@ export class UpdateProfileComponent {
         }
       }
     });
+  }
+
+  onShowDialog() {
+    this.isVisible = true;
+  }
+
+  onCancel() {
+    this.isVisible = false;
+  }
+
+  onDelete() {
+    this.isLoading.set(true);
+    return this.userService.deleteOwnAccount().subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.isVisible = false;
+        this.successMessage.set('Account deleted');
+        setTimeout(() => {
+          this.successMessage.set(null);
+          this.authService.logout();
+          this.router.navigateByUrl('/dog/all');
+        }, 1000);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.isVisible = false;
+        this.errorMessage.set('An error occured. Please try later')
+      }
+    }); 
   }
 }

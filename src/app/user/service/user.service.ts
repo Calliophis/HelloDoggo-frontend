@@ -17,4 +17,8 @@ export class UserService {
     return this.http.patch(`http://localhost:3000/user/me`, updatedUser);
   }
 
+  deleteOwnAccount() {
+    return this.http.delete('http://localhost:3000/user/me');
+  }
+
 }
