@@ -1,9 +1,15 @@
 import { Component, computed, forwardRef, signal } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { IconFieldModule } from 'primeng/iconfield';
 
 @Component({
   selector: 'app-image-input',
-  imports: [],
+  imports: [
+    ReactiveFormsModule,
+    IconFieldModule,
+    ButtonModule
+  ],
   templateUrl: './image-input.component.html',
   providers: [
     {
@@ -18,6 +24,8 @@ export class ImageInputComponent implements ControlValueAccessor {
   selectedFile = signal<File | null>(null);
   previewUrl = signal<string | null>(null);
   isDragOver = signal<boolean>(false);
+
+  imageControl = new FormControl(null);
 
   dynamicClasses = computed<string>(() => {
     if(this.isDragOver() || this.hasImage()) return 'border-amber-500';
@@ -88,5 +96,12 @@ export class ImageInputComponent implements ControlValueAccessor {
       this.previewUrl.set(reader.result as string);
     };
     reader.readAsDataURL(file);
+  }
+
+  removeImage(): void {
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
+    this.imageControl.reset();
+    this.onChange(null);
   }
 }

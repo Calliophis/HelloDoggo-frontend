@@ -1,29 +1,29 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/guard/auth.guard';
-import { editorGuard } from './core/auth/guard/editor.guard';
+import { editorGuard } from './core/authentication/guards/editor.guard';
+import { authenticationGuard } from './core/authentication/guards/authentication.guard';
 
 export const routes: Routes = [
     
     {
         path: 'auth/login', 
-        loadComponent: () => import('./core/auth/login/login.component').then(c => c.LoginComponent)
+        loadComponent: () => import('./features/user/login/login.component').then(c => c.LoginComponent)
     },
     {
         path: 'auth/signup',
-        loadComponent: () => import('./core/auth/signup/signup.component').then(c => c.SignupComponent)
+        loadComponent: () => import('./features/user/signup/signup.component').then(c => c.SignupComponent)
     },
     {
         path: 'user/me',
-        loadComponent: () => import('./user/update-profile/update-profile.component').then(c => c.UpdateProfileComponent),
-        canActivate: [authGuard]
+        loadComponent: () => import('./features/user/update-profile/update-profile.component').then(c => c.UpdateProfileComponent),
+        canActivate: [authenticationGuard]
     },
     {
         path: 'dog/all',
-        loadComponent: () => import('./dogs/dog-gallery/dog-gallery.component').then(c => c.DogGalleryComponent)
+        loadComponent: () => import('./features/dogs/dog-gallery/dog-gallery.component').then(c => c.DogGalleryComponent)
     },
     {
         path: 'dog/create',
-        loadComponent: () => import('./dogs/create-dog/create-dog.component').then(c => c.CreateDogComponent),
+        loadComponent: () => import('./features/dogs/create-dog/create-dog.component').then(c => c.CreateDogComponent),
         canActivate: [editorGuard]
     },
     {

@@ -1,0 +1,39 @@
+<p-card class="flex justify-center m-5 w-[400px] h-[400px] relative">
+    
+    <ng-template #header>
+        <div class=" flex justify-center items-center w-full h-[250px] overflow-hidden rounded-t-xl relative">
+            <img 
+                alt="dog image" 
+                class="w-full object-cover" 
+                [src]="'http://localhost:3000' + dog().img_url">
+        </div>
+        @if (role() === 'admin' || role() === 'editor') {
+            <div class="flex justify-center items-center absolute top-3 right-3 bg-white rounded-4xl w-7 h-7">
+                <button type="button" (click)="onShowDialog()">
+                    <i class="pi pi-pencil hover:text-amber-600 hover:cursor-pointer"></i>
+                </button>
+            </div> 
+        }
+        
+    </ng-template>
+    
+    <ng-template #title>{{ dog().name }}</ng-template>
+    
+    <ng-template #subtitle>
+        <span>
+            {{ dog().breed }}
+        </span>
+        @if (dog().sex === 'male') {
+             <i class="pi pi-mars"></i>
+        }
+        @if (dog().sex === 'female') {
+            <i class="pi pi-venus"></i>
+        }
+    </ng-template>
+    
+    <p class="w-full">{{ dog().description }}</p>
+</p-card>
+
+<p-dialog header="Update your dog information" [modal]="true" [(visible)]="isVisible" [style]="{width: '500px'}">
+    <app-update-dog class="flex justify-center" [dog]="dog()" (submitEvent)="closeDialog()"></app-update-dog>
+</p-dialog>

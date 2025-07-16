@@ -1,0 +1,100 @@
+<p-card header="Update my information" class="flex justify-center gap-3 m-6">
+    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()" class="flex flex-col justify-center items-center gap-4 w-[530px]">
+        <div class="flex flex-col justify-end gap-2 mt-5">
+            <div class="flex flex-col items-start">
+                <fieldset class="flex flex-col gap-2">
+                    <label for="firstName">First name: </label>
+                    <input 
+                        pInputText 
+                        formControlName="firstName" 
+                        id="firstName"
+                        placeholder="{{ user()?.firstName }}" 
+                        autocomplete="off" 
+                        class="w-[500px]"/>
+                </fieldset>
+                @if (hasBeenSubmitted() && updateForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm.controls.firstName) }}</p-message>
+                }
+            </div>
+        
+            <div class="flex flex-col items-start">
+                <fieldset class="flex flex-col gap-2">
+                    <label for="lastName">Last name: </label>
+                    <input 
+                        pInputText 
+                        formControlName="lastName" 
+                        id="lastName"
+                        placeholder="{{ user()?.lastName }}" 
+                        autocomplete="off" 
+                        class="w-[500px]"/>
+                </fieldset>
+                @if (hasBeenSubmitted() && updateForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm.controls.lastName) }}</p-message>
+                }
+            </div>
+        
+            <div class="flex flex-col items-start">
+                <fieldset class="flex flex-col gap-2">
+                    <label for="email">Email: </label>
+                    <input 
+                        pInputText 
+                        formControlName="email" 
+                        id="email"
+                        placeholder="{{ user()?.email }}" 
+                        autocomplete="off" 
+                        class="w-[500px]"/>
+                </fieldset>
+                @if (hasBeenSubmitted() && updateForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm.controls.email) }}</p-message>
+                }
+            </div>
+            
+            <div class="flex gap-5">
+                <div class="flex flex-col items-start">
+                    <fieldset class="flex flex-col gap-2">
+                        <label for="password">Password: </label>
+                        <app-password-input formControlName="password" id="password" hasFeedback></app-password-input>
+                    </fieldset>
+                    
+                    @if (hasBeenSubmitted() && updateForm.invalid) {
+                        <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm.controls.password) }}</p-message>
+                    }
+                </div>
+
+                <div class="flex flex-col items-start">
+                    <fieldset class="flex flex-col gap-2">
+                        <label for="confirmPassword">Confirm password: </label>
+                        <app-password-input formControlName="confirmPassword" id="confirmPassword" label="Confirm password"></app-password-input>
+                    </fieldset>
+                    
+                    @if (hasBeenSubmitted() && updateForm.invalid) {
+                        <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm) }}</p-message>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="flex w-[500px] mt-5 justify-between">
+            <div class="flex gap-2">
+                <p-button type="submit" severity="success">Save changes</p-button>
+                <p-button type="reset" severity="secondary">Cancel</p-button>
+            </div>
+            <div>
+                <p-button type="button" severity="danger" (click)="onShowDialog()">Delete my account</p-button>
+                <p-dialog header="Are you sure?" [modal]="true" [(visible)]="isVisible" [style]="{ width: '20rem' }">
+                    <p class="text-center">This will permanently delete your account.</p>
+                    <div class="flex justify-center gap-3 mt-5">
+                        <p-button type="button" severity="secondary" (click)="onCancel()">Cancel</p-button>
+                        <p-button type="button" severity="danger" (onClick)="onDelete()">Delete</p-button>
+                    </div>
+                </p-dialog>
+            </div>
+        </div>
+        
+        @if (errorMessage()) {
+            <p-message severity="error">{{ errorMessage() }}</p-message>
+        }
+        @if (successMessage()) {
+            <p-message severity="success">{{ successMessage() }}</p-message>
+        }
+    </form>
+</p-card>

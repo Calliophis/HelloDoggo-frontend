@@ -5,27 +5,34 @@
     (drop)="onDrop($event)"
 >
 
-    <label for="image" class="font-semibold">Add a picture of them in their best light</label>
+    <label for="image" class="font-semibold">Add an image</label>
    
     <div
-    class="flex flex-col gap-2 items-center text-center border-2 border-dashed hover:border-amber-500 rounded-md p-2"
+    class="flex flex-col gap-2 items-center text-center border-2 border-dashed hover:border-amber-500 rounded-md p-4 relative"
     [class]="dynamicClasses()"
     >
+        @if (hasImage()) {
+            <div class="flex justify-center items-center absolute top-3 right-3 bg-white rounded-4xl w-7 h-7">
+                <button type="button" (click)="removeImage()">
+                    <i class="pi pi-trash hover:text-red-500"></i>
+                </button>
+            </div>
+        }
+        
         <p>Drag & drop your image here</p>
-        <p>or</p>
         <input 
             type="file"
-            id="image"
-            accept="image/*" 
-            formControlName="image" 
+            id="imageInput"
+            accept="image/*"
+            [formControl]="imageControl"
             (change)="handleInput($event)"
             class="max-w-75 overflow-hidden focus:outline-1 focus:outline-amber-500 focus:outline-offset-2 focus:rounded-md file:cursor-pointer file:mr-4 file:rounded-md file:border-0 file:p-2 file:bg-primary file:py-2 file:text-white file:text-sm file:font-semibold hover:file:bg-amber-600"
         />
 
         @if (previewUrl()) {
-        <div class="mt-2 rounded-md w-40 h-25 overflow-hidden object-cover object-center">
-            <img [src]="previewUrl()" alt="Preview">
-        </div>
-    } 
+            <div class="object-cover object-center flex justify-center items-center z-1 mt-2 rounded-md w-40 h-25 overflow-hidden">
+                <img [src]="previewUrl()" alt="Preview">
+            </div>
+        } 
     </div>
 </fieldset>

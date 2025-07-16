@@ -1,0 +1,98 @@
+<form [formGroup]="updateDogForm" (ngSubmit)="onSubmit()" class="flex flex-col justify-center items-start gap-5 m-2"> 
+    <div class="flex flex-col items-end">
+        <fieldset class="flex flex-col justify-center items-start gap-2">
+            <label for="name" class="font-semibold">Name</label>
+            <input 
+                pInputText 
+                formControlName="name" 
+                id="name" 
+                class="w-75"
+            />
+        </fieldset>
+        @if (hasBeenSubmitted() && updateDogForm.invalid) {
+            <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateDogForm.controls.name) }}</p-message>
+        }
+    </div>
+    
+    <div class="flex flex-col items-end w-full">
+        <fieldset class="flex flex-col justify-center items-start gap-2 w-full">
+            <span class="font-semibold">Sex</span>
+            <div class="flex gap-4">
+                <div>
+                    <p-radiobutton id="male" value="male" formControlName="sex"></p-radiobutton>
+                    <label for="male" class="ml-2">Male</label>
+                </div>
+                <div>
+                    <p-radiobutton id="female" value="female" formControlName="sex"></p-radiobutton>
+                    <label for="female" class="ml-2">Female</label>
+                </div>
+            </div>
+        </fieldset>
+        @if (hasBeenSubmitted() && updateDogForm.invalid) {
+            <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateDogForm.controls.sex) }}</p-message>
+        }
+    </div>
+    
+    <div class="flex flex-col items-end">
+        <fieldset class="flex flex-col justify-center items-start gap-2">
+            <label for="breed" class="font-semibold">Breed</label>
+            <input 
+                pInputText 
+                formControlName="breed" 
+                id="breed"
+                class="w-75"
+            /> 
+        </fieldset>
+        @if (hasBeenSubmitted() && updateDogForm.invalid) {
+            <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateDogForm.controls.sex) }}</p-message>
+        }
+    </div>
+    
+    <div class="flex flex-col items-end">
+        <fieldset class="flex flex-col justify-center items-start gap-2">
+            <label for="description" class="font-semibold">Description</label>
+            <input 
+                pInputText 
+                formControlName="description" 
+                id="description"
+                class="w-75"
+            />
+        </fieldset>
+        @if (hasBeenSubmitted() && updateDogForm.invalid) {
+            <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateDogForm.controls.description) }}</p-message>
+        }
+    </div>
+    
+    <div>
+        <h2 class="font-semibold">Image</h2>
+        <div class="flex justify-center items-center w-75 relative group">
+            <button type="button" (click)="showDialog()" class="justify-center items-center z-2 mt-2 rounded-md w-40 h-25 overflow-hidden absolute bg-amber-500/50 hidden group-hover:flex">
+                <i class="pi pi-pencil text-white" style="font-size: x-large;"></i>
+            </button>
+            <div class="flex justify-center items-center z-1 mt-2 rounded-md w-40 h-25 overflow-hidden">
+                <img 
+                [src]="'http://localhost:3000' + dog().img_url" 
+                alt="Preview"
+                class="w-full object-cover">
+            </div> 
+        </div>
+        
+    </div>
+    
+    <div class="w-full flex flex-col items-center justify-center">
+        <p-button type="submit" severity="success" [loading]="isLoading()" class="font-semibold m-3">Submit</p-button>
+        @if (errorMessage()) {
+        <p-message severity="error">{{ errorMessage() }}</p-message>
+        }
+        @if (successMessage()) {
+            <p-message severity="success">{{ successMessage() }}</p-message>
+        }
+    </div>
+</form>
+
+<p-dialog header="Update your image" [modal]="true" [(visible)]="isVisible">
+    <app-image-input [formControl]="imageInput" />
+    <div class="flex justify-center w-75 mt-5">
+        <p-button type="button" severity="success" (onClick)="updateImage()">Update image</p-button>
+    </div>
+</p-dialog>

@@ -5,14 +5,14 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { AmberPreset } from './amber-preset';
-import { authInterceptor } from './core/auth/auth.interceptor';
+import { authenticationInterceptor } from './core/authentication/authentication.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([authInterceptor])
+      withInterceptors([authenticationInterceptor])
     ),
     provideAnimationsAsync(),
     providePrimeNG({
