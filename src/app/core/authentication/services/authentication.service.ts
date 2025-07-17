@@ -10,14 +10,16 @@ import { SignupDto } from '../models/signup.model';
   providedIn: 'root'
 })
 export class AuthenticationService {
-
   private http = inject(HttpClient);
   private router = inject(Router);
-  isAuthenticated = computed<boolean>(() => !!this.token());
-  token = signal<string | null>(null);
-  role = signal<Role | null>(null);
 
-  init(): void {
+  isAuthenticated = computed<boolean>(() => !!this.#token());
+  #token = signal<string | null>(null);
+  token = this.#token.asReadonly();
+  #role = signal<Role | null>(null);
+  role = this.#role.asReadonly();
+
+  initAuthentication(): void {
     this.updateToken();
     this.updateRole();
   }
@@ -28,8 +30,7 @@ export class AuthenticationService {
         const loginUser: LoginDto = {
           email: user.email,
           password: user.password
-        }
-        
+        };
         return this.login(loginUser);
       })
     )
@@ -55,11 +56,11 @@ export class AuthenticationService {
   }
 
   private updateToken(): void {
-    this.token.set(localStorage.getItem('access_token'));
+    this.#token.set(localStorage.getItem('access_token'));
   }
 
   private updateRole(): void {
     const storedRole = localStorage.getItem('role');
-    this.role.set(storedRole as Role);
+    this.#role.set(storedRole as Role);
   }
 }

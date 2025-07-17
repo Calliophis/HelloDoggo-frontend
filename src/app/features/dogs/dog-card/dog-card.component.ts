@@ -23,7 +23,7 @@ export class DogCardComponent {
 
   dog = input.required<Dog>();
   role = this.authenticationService.role;
-  isVisible = model<boolean>(false);
+  isVisible = model(false);
 
   onShowDialog() {
     this.isVisible.set(true);

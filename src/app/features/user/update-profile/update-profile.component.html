@@ -1,5 +1,5 @@
 <p-card header="Update my information" class="flex justify-center gap-3 m-6">
-    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()" class="flex flex-col justify-center items-center gap-4 w-[530px]">
+    <form [formGroup]="updateProfileForm" (ngSubmit)="onSubmit()" class="flex flex-col justify-center items-center gap-4 w-[530px]">
         <div class="flex flex-col justify-end gap-2 mt-5">
             <div class="flex flex-col items-start">
                 <fieldset class="flex flex-col gap-2">
@@ -8,12 +8,10 @@
                         pInputText 
                         formControlName="firstName" 
                         id="firstName"
-                        placeholder="{{ user()?.firstName }}" 
-                        autocomplete="off" 
                         class="w-[500px]"/>
                 </fieldset>
-                @if (hasBeenSubmitted() && updateForm.invalid) {
-                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm.controls.firstName) }}</p-message>
+                @if (hasBeenSubmitted() && updateProfileForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateProfileForm.controls.firstName) }}</p-message>
                 }
             </div>
         
@@ -23,13 +21,11 @@
                     <input 
                         pInputText 
                         formControlName="lastName" 
-                        id="lastName"
-                        placeholder="{{ user()?.lastName }}" 
-                        autocomplete="off" 
+                        id="lastName" 
                         class="w-[500px]"/>
                 </fieldset>
-                @if (hasBeenSubmitted() && updateForm.invalid) {
-                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm.controls.lastName) }}</p-message>
+                @if (hasBeenSubmitted() && updateProfileForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateProfileForm.controls.lastName) }}</p-message>
                 }
             </div>
         
@@ -40,12 +36,10 @@
                         pInputText 
                         formControlName="email" 
                         id="email"
-                        placeholder="{{ user()?.email }}" 
-                        autocomplete="off" 
                         class="w-[500px]"/>
                 </fieldset>
-                @if (hasBeenSubmitted() && updateForm.invalid) {
-                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm.controls.email) }}</p-message>
+                @if (hasBeenSubmitted() && updateProfileForm.invalid) {
+                    <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateProfileForm.controls.email) }}</p-message>
                 }
             </div>
             
@@ -56,8 +50,8 @@
                         <app-password-input formControlName="password" id="password" hasFeedback></app-password-input>
                     </fieldset>
                     
-                    @if (hasBeenSubmitted() && updateForm.invalid) {
-                        <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm.controls.password) }}</p-message>
+                    @if (hasBeenSubmitted() && updateProfileForm.invalid) {
+                        <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateProfileForm.controls.password) }}</p-message>
                     }
                 </div>
 
@@ -67,8 +61,8 @@
                         <app-password-input formControlName="confirmPassword" id="confirmPassword" label="Confirm password"></app-password-input>
                     </fieldset>
                     
-                    @if (hasBeenSubmitted() && updateForm.invalid) {
-                        <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateForm) }}</p-message>
+                    @if (hasBeenSubmitted() && updateProfileForm.invalid) {
+                        <p-message severity="error" variant="simple" size="small">{{ getErrorText(updateProfileForm) }}</p-message>
                     }
                 </div>
             </div>

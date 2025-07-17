@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -13,6 +13,7 @@ import { AuthenticationService } from '../../../core/authentication/services/aut
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { PasswordInputComponent } from '../components/password-input/password-input.component';
 import { SignupForm } from './signup-form.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-signup',
@@ -33,6 +34,7 @@ export class SignupComponent {
   private errorMessageService = inject(ErrorMessageService)
   private authenticationService = inject(AuthenticationService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   signupForm = new FormGroup<SignupForm>({
     firstName: new FormControl('', { validators: [Validators.required, Validators.minLength(2), WhiteSpaceValidator()], nonNullable: true }),
@@ -60,12 +62,10 @@ export class SignupComponent {
       return;
     }
 
-    this.isLoading.set(true);
     this.signupForm.disable();
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    
     const filteredForm = {
       firstName: this.signupForm.controls.firstName.value,
       lastName: this.signupForm.controls.lastName.value,
@@ -73,7 +73,8 @@ export class SignupComponent {
       password: this.signupForm.controls.password.value,
     }
     
-    return this.authenticationService.signup(filteredForm).subscribe({
+    this.isLoading.set(true);
+    return this.authenticationService.signup(filteredForm).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.successMessage.set('Account created');
         setTimeout(() => {
@@ -82,8 +83,8 @@ export class SignupComponent {
         }, 1000);
       },
       error: (error) => {
-        this.signupForm.enable();
         this.isLoading.set(false);
+        this.signupForm.enable();
 
         if (error.status === 401) {
           this.errorMessage.set('This email is already used')

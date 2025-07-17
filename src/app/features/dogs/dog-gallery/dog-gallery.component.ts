@@ -3,10 +3,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DogCardComponent } from '../dog-card/dog-card.component';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
-import { Role } from '../../../core/authentication/models/role.type';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
-import { Dog } from '../../../core/dogs/dog.model';
 import { DogService } from '../../../core/dogs/dog.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dog-gallery',
@@ -23,18 +22,18 @@ export class DogGalleryComponent {
   private authenticationService = inject(AuthenticationService);
   private router = inject(Router);
 
-  dogs = signal<Dog[] | null>(null);
-  isLoading = signal<boolean>(false);
-  role = signal<Role | null>(this.authenticationService.role());
+  dogs = this.dogService.dogs;
+  role = this.authenticationService.role;
+
+  isLoading = signal(false);
 
   constructor() {
-    this.isLoading.set(true)
-    this.dogService.getAllDogs().subscribe({
-      next: dogsResponse => {
-        this.dogs.set(dogsResponse);
-        this.isLoading.set(false);  
+    this.isLoading.set(true);
+    this.dogService.initDogs().pipe(takeUntilDestroyed()).subscribe({
+      next: () => {
+        this.isLoading.set(false);
       }
-    })
+    });
   }
 
   onCreateDog() {

@@ -1,5 +1,4 @@
-import { Component, inject, input, model, OnInit, output, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, DestroyRef, inject, input, model, OnInit, output, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -15,6 +14,7 @@ import { ImageInputComponent } from '../../../shared/components/image-input/imag
 import { WhiteSpaceValidator } from '../../../shared/validators/white-space.validator';
 import { DialogModule } from 'primeng/dialog';
 import { UpdateDogForm } from './update-dog-form.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-update-dog',
@@ -36,13 +36,16 @@ import { UpdateDogForm } from './update-dog-form.model';
 export class UpdateDogComponent implements OnInit {
   private errorMessageService = inject(ErrorMessageService);
   private dogService = inject(DogService);
+  private destroyRef = inject(DestroyRef);
   
   dog = input.required<Dog>();
   submitEvent = output<void>();
+
   hasBeenSubmitted = signal<boolean>(false);
-  isLoading = signal<boolean>(false);
+  isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string |null>(null);
+  
   isVisible = model<boolean>(false);
 
   updateDogForm = new FormGroup<UpdateDogForm>({
@@ -52,7 +55,7 @@ export class UpdateDogComponent implements OnInit {
     description: new FormControl('', { validators: [Validators.minLength(2), WhiteSpaceValidator()], nonNullable: true }),
   })
 
-  imageInput = new FormControl<File | null>(null)
+  imageInput = new FormControl<File | null>(null);
 
   ngOnInit(): void {
     this.updateDogForm.patchValue({
@@ -72,19 +75,23 @@ export class UpdateDogComponent implements OnInit {
   }
 
   updateImage() {
-    
     if (!this.imageInput.value) {
       throw new Error('No image selected');
     }
-    return this.dogService.updateDogImage(this.imageInput.value, this.dog().id).subscribe({
+
+    const formData = this.dogService.generateUpdateDogImageFormData(this.imageInput.value); 
+
+    this.isLoading.set(true);
+    return this.dogService.updateDogImage(formData, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
+        this.isLoading.set(false);
         this.isVisible.set(false);
       },
       error: (error) => {
+        this.isLoading.set(false);
         throw new Error('update image error: ' + error.message)
       }
     });
-
   }
   
   onSubmit() { 
@@ -94,25 +101,25 @@ export class UpdateDogComponent implements OnInit {
       return;
     }
 
-    this.isLoading.set(true);
     this.updateDogForm.disable();
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-
     if(!this.dog()) throw new Error('Dog not defined');
     
-    return this.dogService.updateDogInfo(this.updateDogForm.value, this.dog().id).subscribe({
+    this.isLoading.set(true);
+    return this.dogService.updateDogInfo(this.updateDogForm.value, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
+        this.updateDogForm.enable();
         this.successMessage.set('Dog updated');
         setTimeout(() => {
           this.submitEvent.emit();
         }, 1000);
       },
       error: () => {
-        this.updateDogForm.enable();
         this.isLoading.set(false);
+        this.updateDogForm.enable();
         if (this.updateDogForm.invalid) {
           this.errorMessage.set(null)
         } else {

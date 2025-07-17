@@ -76,7 +76,6 @@
                 class="w-full object-cover">
             </div> 
         </div>
-        
     </div>
     
     <div class="w-full flex flex-col items-center justify-center">
@@ -93,6 +92,6 @@
 <p-dialog header="Update your image" [modal]="true" [(visible)]="isVisible">
     <app-image-input [formControl]="imageInput" />
     <div class="flex justify-center w-75 mt-5">
-        <p-button type="button" severity="success" (onClick)="updateImage()">Update image</p-button>
+        <p-button type="button" severity="success" [loading]="isLoading()" (onClick)="updateImage()">Update image</p-button>
     </div>
 </p-dialog>

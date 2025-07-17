@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -11,7 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { ErrorMessageService } from '../../../core/error-message.service';
-import { Dog } from '../../../core/dogs/dog.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface LoginForm {  email: FormControl<string>;  password: FormControl<string>;}
 
@@ -35,6 +35,7 @@ export class LoginComponent {
 
   private authenticationService = inject(AuthenticationService);
   private errorMessageService = inject(ErrorMessageService);
+  private destroyRef = inject(DestroyRef);
 
   loginForm = new FormGroup<LoginForm>({
     email: new FormControl('', { validators: [Validators.email, Validators.required], nonNullable: true }),
@@ -47,13 +48,16 @@ export class LoginComponent {
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
+  getErrorText(control: AbstractControl): string | null {
+    return this.errorMessageService.getErrorText(control);
+  } 
+
   onSubmit() {
     this.errorMessage.set(null);
     this.successMessage.set(null);
     this.hasBeenSubmitted.set(true);
     this.loginForm.markAllAsTouched();
     this.loginForm.disable();
-    this.isLoading.set(true);
 
     if (this.loginForm.invalid) {
       return;
@@ -64,7 +68,8 @@ export class LoginComponent {
       password: this.loginForm.controls.password.value,
     }
     
-    return this.authenticationService.login(loginDto).subscribe({
+    this.isLoading.set(true);
+    return this.authenticationService.login(loginDto).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.successMessage.set('Successfully logged in');
         setTimeout(() => {
@@ -73,8 +78,8 @@ export class LoginComponent {
         }, 1000)
       },
       error: (error) => {
-        this.loginForm.enable();
         this.isLoading.set(false);
+        this.loginForm.enable();
         if (error.status === 401) {
           this.errorMessage.set('Incorrect email or password');
         } else {
@@ -83,8 +88,4 @@ export class LoginComponent {
       }
     });
   }
-
-  getErrorText(control: AbstractControl): string | null {
-    return this.errorMessageService.getErrorText(control);
-  } 
 }
