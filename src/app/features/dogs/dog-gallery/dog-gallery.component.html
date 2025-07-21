@@ -7,7 +7,7 @@
         </h1>
 
         @if (role() === 'editor' || role() === 'admin') {
-            <p-button type="button" label="Add new dog" (click)="onCreateDog()"></p-button>
+            <p-button type="button" label="Add new dog" (click)="createDog()" [loading]="isLoading()"></p-button>
         }
         
     </div>

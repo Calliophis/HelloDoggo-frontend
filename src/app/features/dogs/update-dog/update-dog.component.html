@@ -1,4 +1,4 @@
-<form [formGroup]="updateDogForm" (ngSubmit)="onSubmit()" class="flex flex-col justify-center items-start gap-5 m-2"> 
+<form [formGroup]="updateDogForm" (ngSubmit)="onSubmit()" class="flex flex-col justify-center items-center gap-5 m-2"> 
     <div class="flex flex-col items-end">
         <fieldset class="flex flex-col justify-center items-start gap-2">
             <label for="name" class="font-semibold">Name</label>
@@ -6,7 +6,7 @@
                 pInputText 
                 formControlName="name" 
                 id="name" 
-                class="w-75"
+                class="w-[400px]"
             />
         </fieldset>
         @if (hasBeenSubmitted() && updateDogForm.invalid) {
@@ -17,7 +17,7 @@
     <div class="flex flex-col items-end w-full">
         <fieldset class="flex flex-col justify-center items-start gap-2 w-full">
             <span class="font-semibold">Sex</span>
-            <div class="flex gap-4">
+            <div class="flex gap-10">
                 <div>
                     <p-radiobutton id="male" value="male" formControlName="sex"></p-radiobutton>
                     <label for="male" class="ml-2">Male</label>
@@ -40,7 +40,7 @@
                 pInputText 
                 formControlName="breed" 
                 id="breed"
-                class="w-75"
+                class="w-[400px]"
             /> 
         </fieldset>
         @if (hasBeenSubmitted() && updateDogForm.invalid) {
@@ -55,7 +55,7 @@
                 pInputText 
                 formControlName="description" 
                 id="description"
-                class="w-75"
+                class="w-[400px]"
             />
         </fieldset>
         @if (hasBeenSubmitted() && updateDogForm.invalid) {
@@ -63,10 +63,10 @@
         }
     </div>
     
-    <div>
+    <div class="flex flex-col items-start w-full">
         <h2 class="font-semibold">Image</h2>
-        <div class="flex justify-center items-center w-75 relative group">
-            <button type="button" (click)="showDialog()" class="justify-center items-center z-2 mt-2 rounded-md w-40 h-25 overflow-hidden absolute bg-amber-500/50 hidden group-hover:flex">
+        <div class="flex justify-center items-center w-[400px] relative group">
+            <button type="button" (click)="showUpdateImageDialog()" class="justify-center items-center z-2 mt-2 rounded-md w-40 h-25 overflow-hidden absolute bg-amber-500/50 hidden group-hover:flex">
                 <i class="pi pi-pencil text-white" style="font-size: x-large;"></i>
             </button>
             <div class="flex justify-center items-center z-1 mt-2 rounded-md w-40 h-25 overflow-hidden">
@@ -78,20 +78,35 @@
         </div>
     </div>
     
-    <div class="w-full flex flex-col items-center justify-center">
-        <p-button type="submit" severity="success" [loading]="isLoading()" class="font-semibold m-3">Submit</p-button>
+    
+        <div class="w-full flex mt-5 justify-between">
+            <div class="flex gap-2">
+                <p-button type="submit" severity="success" [loading]="isLoading()">Save changes</p-button>
+                <p-button type="button" severity="secondary" (click)="cancelUpdate()">Cancel</p-button>
+            </div>
+            <p-button type="button" severity="danger" (click)="showDeleteDialog()">Delete dog</p-button>
+        </div>
+        
         @if (errorMessage()) {
-        <p-message severity="error">{{ errorMessage() }}</p-message>
+            <p-message severity="error">{{ errorMessage() }}</p-message>
         }
         @if (successMessage()) {
             <p-message severity="success">{{ successMessage() }}</p-message>
         }
-    </div>
+    
 </form>
 
-<p-dialog header="Update your image" [modal]="true" [(visible)]="isVisible">
+<p-dialog header="Update your image" [modal]="true" [(visible)]="isVisibleUpdateImageDialog">
     <app-image-input [formControl]="imageInput" />
     <div class="flex justify-center w-75 mt-5">
         <p-button type="button" severity="success" [loading]="isLoading()" (onClick)="updateImage()">Update image</p-button>
+    </div>
+</p-dialog>
+
+<p-dialog header="Are you sure?" [modal]="true" [(visible)]="isVisibleDeleteDialog" [style]="{ width: '20rem' }">
+    <p class="text-center">This will permanently delete this dog.</p>
+    <div class="flex justify-center gap-3 mt-5">
+        <p-button type="button" severity="secondary" (click)="cancelDelete()">Cancel</p-button>
+        <p-button type="button" severity="danger" (onClick)="deleteDog()" [loading]="isLoading()">Delete</p-button>
     </div>
 </p-dialog>

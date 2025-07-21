@@ -36,7 +36,7 @@ export class DogGalleryComponent {
     });
   }
 
-  onCreateDog() {
+  createDog() {
     this.router.navigateByUrl('/dog/create');
   }
 }

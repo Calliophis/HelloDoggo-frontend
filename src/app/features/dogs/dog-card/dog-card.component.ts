@@ -25,7 +25,7 @@ export class DogCardComponent {
   role = this.authenticationService.role;
   isVisible = model(false);
 
-  onShowDialog() {
+  showDialog() {
     this.isVisible.set(true);
   }
 

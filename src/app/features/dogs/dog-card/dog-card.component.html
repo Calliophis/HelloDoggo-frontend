@@ -9,7 +9,7 @@
         </div>
         @if (role() === 'admin' || role() === 'editor') {
             <div class="flex justify-center items-center absolute top-3 right-3 bg-white rounded-4xl w-7 h-7">
-                <button type="button" (click)="onShowDialog()">
+                <button type="button" (click)="showDialog()">
                     <i class="pi pi-pencil hover:text-amber-600 hover:cursor-pointer"></i>
                 </button>
             </div> 
@@ -34,6 +34,6 @@
     <p class="w-full">{{ dog().description }}</p>
 </p-card>
 
-<p-dialog header="Update your dog information" [modal]="true" [(visible)]="isVisible" [style]="{width: '500px'}">
-    <app-update-dog class="flex justify-center" [dog]="dog()" (submitEvent)="closeDialog()"></app-update-dog>
+<p-dialog header="Update your dog information" [modal]="true" [(visible)]="isVisible" [style]="{width: '530px'}">
+    <app-update-dog class="flex justify-center" [dog]="dog()" (submitEvent)="closeDialog()" (cancelEvent)="closeDialog()"></app-update-dog>
 </p-dialog>

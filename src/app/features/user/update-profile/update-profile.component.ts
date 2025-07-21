@@ -92,9 +92,9 @@ export class UpdateProfileComponent implements OnInit {
     this.isLoading.set(true);
     return this.userService.updateUser(updatedUser).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
+        this.isLoading.set(false);
         this.successMessage.set('Information updated');
         setTimeout(() => {
-          this.isLoading.set(false);
           this.updateProfileForm.enable();
           this.successMessage.set(null);
         }, 1000);
@@ -111,15 +111,15 @@ export class UpdateProfileComponent implements OnInit {
     });
   }
 
-  onShowDialog() {
+  showDialog() {
     this.isVisible.set(true);
   }
 
-  onCancel() {
+  cancelDelete() {
     this.isVisible.set(false);
   }
 
-  onDelete() {
+  deleteProfile() {
     this.isLoading.set(true);
     return this.userService.deleteOwnAccount().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {

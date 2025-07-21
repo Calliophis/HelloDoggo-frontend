@@ -52,8 +52,8 @@ export class DogService {
     );
   }
 
-  getDogById(dogId: number): Observable<Dog> {
-    return this.http.get<Dog>(`http://localhost:3000/dog/${dogId}`);
+  getDogById(id: number): Observable<Dog> {
+    return this.http.get<Dog>(`http://localhost:3000/dog/${id}`);
   }
 
   createDog(newDog: FormData): Observable<any> {
@@ -68,6 +68,12 @@ export class DogService {
 
   updateDogImage(formData: FormData, id: number): Observable<any> {
     return this.http.patch(`http://localhost:3000/dog/${id}/image`, formData).pipe(
+      switchMap(() => this.getAllDogs())
+    );
+  }
+
+  deleteDog(id: number) {
+    return this.http.delete(`http://localhost:3000/dog/${id}`).pipe(
       switchMap(() => this.getAllDogs())
     );
   }

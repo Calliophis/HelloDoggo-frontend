@@ -40,13 +40,15 @@ export class UpdateDogComponent implements OnInit {
   
   dog = input.required<Dog>();
   submitEvent = output<void>();
+  cancelEvent = output<void>();
 
   hasBeenSubmitted = signal<boolean>(false);
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string |null>(null);
   
-  isVisible = model<boolean>(false);
+  isVisibleUpdateImageDialog = model<boolean>(false);
+  isVisibleDeleteDialog = model<boolean>(false);
 
   updateDogForm = new FormGroup<UpdateDogForm>({
     name: new FormControl('', { validators: [Validators.minLength(2), WhiteSpaceValidator()], nonNullable: true }),
@@ -70,8 +72,26 @@ export class UpdateDogComponent implements OnInit {
     return this.errorMessageService.getErrorText(control);
   }
 
-  showDialog() {
-    this.isVisible.set(true);
+  cancelUpdate() {
+    this.cancelEvent.emit();
+    this.updateDogForm.patchValue({
+      name: this.dog().name,
+      sex: this.dog().sex,
+      breed: this.dog().breed,
+      description: this.dog().description
+    });
+  }
+
+  cancelDelete() {
+    this.isVisibleDeleteDialog.set(false);
+  }
+
+  showUpdateImageDialog() {
+    this.isVisibleUpdateImageDialog.set(true);
+  }
+
+  showDeleteDialog() {
+    this.isVisibleDeleteDialog.set(true);
   }
 
   updateImage() {
@@ -85,7 +105,7 @@ export class UpdateDogComponent implements OnInit {
     return this.dogService.updateDogImage(formData, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.isVisible.set(false);
+        this.isVisibleUpdateImageDialog.set(false);
       },
       error: (error) => {
         this.isLoading.set(false);
@@ -127,6 +147,11 @@ export class UpdateDogComponent implements OnInit {
         }
       }
     });
-  } 
+  }
+  
+  deleteDog() {
+    this.isLoading.set(true);
+    return this.dogService.deleteDog(this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
 }
 
