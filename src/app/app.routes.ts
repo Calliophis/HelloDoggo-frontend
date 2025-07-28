@@ -13,11 +13,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/user/signup/signup.component').then(c => c.SignupComponent)
     },
     {
-        path: 'user/me',
-        loadComponent: () => import('./features/user/update-profile/update-profile.component').then(c => c.UpdateProfileComponent),
-        canActivate: [authenticationGuard]
-    },
-    {
         path: 'dog/all',
         loadComponent: () => import('./features/dogs/dog-gallery/dog-gallery.component').then(c => c.DogGalleryComponent)
     },
@@ -27,7 +22,16 @@ export const routes: Routes = [
         canActivate: [editorGuard]
     },
     {
-        path: '*',
-        redirectTo: ''
+        path: 'home',
+        loadComponent: () => import('./features/home/home.component').then(c => c.HomeComponent)
+    },
+    {
+        path: 'user/me',
+        loadComponent: () => import('./features/user/update-profile/update-profile.component').then(c => c.UpdateProfileComponent),
+        canActivate: [authenticationGuard]
+    },
+    {
+        path: '**',
+        redirectTo: 'home'
     }
 ];
