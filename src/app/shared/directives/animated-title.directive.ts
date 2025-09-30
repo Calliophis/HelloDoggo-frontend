@@ -1,16 +1,17 @@
 import { Directive, ElementRef, inject } from '@angular/core';
 
 @Directive({
-  selector: '[appIntersectionObserver]'
+  selector: '[appAnimatedTitle]'
 })
-export class IntersectionObserverDirective {
+export class AnimatedTitleDirective {
   private element = inject(ElementRef);
 
   observer = new IntersectionObserver(
     entries => this.applyStyle(entries), 
-  {
-    threshold: 1
-  });
+    {
+     threshold: 1
+    }
+  );
 
   constructor() {
     if (this.element) {

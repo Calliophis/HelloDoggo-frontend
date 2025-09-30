@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { IntersectionObserverDirective } from '../../shared/directives/intersection-observer.directive';
+import { AnimatedTitleDirective } from '../../shared/directives/animated-title.directive';
 
 @Component({
   selector: 'app-home',
   imports: [
-    IntersectionObserverDirective,
+    AnimatedTitleDirective,
     ButtonModule
   ],
   templateUrl: './home.component.html'
