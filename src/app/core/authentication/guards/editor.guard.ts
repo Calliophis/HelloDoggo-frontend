@@ -7,7 +7,7 @@ export const editorGuard: CanActivateFn = (route, state) => {
   const userRole = authenticationService.role();
   const router = inject(Router);
 
-  if (userRole?.includes('editor') || userRole?.includes('admin')) {
+  if (userRole === 'editor' || userRole === 'admin') {
     return true;
   }
 

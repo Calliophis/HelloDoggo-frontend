@@ -6,6 +6,7 @@ import { LoginDto } from '../models/login.model';
 import { Role } from '../models/role.type';
 import { SignupDto } from '../models/signup.model';
 import { environment } from '../../../../environments/environment.development';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,19 +14,19 @@ import { environment } from '../../../../environments/environment.development';
 export class AuthenticationService {
   #http = inject(HttpClient);
   #router = inject(Router);
+  #userService = inject(UserService);
 
   isAuthenticated = computed<boolean>(() => !!this.#token());
   #token = signal<string | null>(null);
   token = this.#token.asReadonly();
-  #role = signal<Role | null>(null);
-  role = this.#role.asReadonly();
+  role = computed(() => this.#userService.user()?.role);
 
-  initAuthentication(): void {
+  initAuthentication(): Observable<void> {
     this.updateToken();
-    this.updateRole();
+    return this.#userService.initUser();
   }
 
-  signup(user: SignupDto): Observable<Object> {
+  signup(user: SignupDto): Observable<void> {
     return this.#http.post(`${environment.apiUrl}/auth/signup`, user).pipe(
       switchMap(() => {
         const loginUser: LoginDto = {
@@ -37,31 +38,23 @@ export class AuthenticationService {
     )
   }
 
-  login(user: LoginDto): Observable<{ access_token: string, role: Role }> {
-    return this.#http.post<{ access_token: string, role: Role }>(`${environment.apiUrl}/auth/login`, user).pipe(
-      tap(loginResponse => {
-        localStorage.setItem('access_token', loginResponse.access_token);
-        localStorage.setItem('role', loginResponse.role);
+  login(user: LoginDto): Observable<void> {
+    return this.#http.post<{ accessToken: string, role: Role }>(`${environment.apiUrl}/auth/login`, user).pipe(
+      switchMap(loginResponse => {
+        localStorage.setItem('accessToken', loginResponse.accessToken);
         this.updateToken();
-        this.updateRole();
-      })
+        return this.#userService.initUser();
+      }),
     );
   }
 
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('role');
+    localStorage.removeItem('accessToken');
     this.updateToken();
-    this.updateRole();
     this.#router.navigateByUrl('/auth/login');
   }
 
   private updateToken(): void {
-    this.#token.set(localStorage.getItem('access_token'));
-  }
-
-  private updateRole(): void {
-    const storedRole = localStorage.getItem('role');
-    this.#role.set(storedRole as Role);
+    this.#token.set(localStorage.getItem('accessToken'));
   }
 }

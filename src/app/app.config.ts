@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -6,6 +6,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import { AmberPreset } from './amber-preset';
 import { authenticationInterceptor } from './core/authentication/authentication.interceptor';
+import { AuthenticationService } from './core/authentication/services/authentication.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,6 +23,10 @@ export const appConfig: ApplicationConfig = {
             darkModeSelector: '.my-app-dark'
           }
       }
-    })
+    }),
+    provideAppInitializer(() => {
+      const authenticationService = inject(AuthenticationService);
+      return authenticationService.initAuthentication();
+    }),
   ]
 };

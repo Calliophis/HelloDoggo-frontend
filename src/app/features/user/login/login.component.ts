@@ -12,6 +12,7 @@ import { CardModule } from 'primeng/card';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 interface LoginForm {  email: FormControl<string>;  password: FormControl<string>;}
 
@@ -36,6 +37,7 @@ export class LoginComponent {
   private authenticationService = inject(AuthenticationService);
   private errorMessageService = inject(ErrorMessageService);
   private destroyRef = inject(DestroyRef);
+  #router = inject(Router);
 
   loginForm = new FormGroup<LoginForm>({
     email: new FormControl('', { validators: [Validators.email, Validators.required], nonNullable: true }),
@@ -74,7 +76,7 @@ export class LoginComponent {
         this.successMessage.set('Successfully logged in');
         setTimeout(() => {
           this.isLoading.set(false);
-          window.history.back();
+          this.#router.navigateByUrl('dog/all')
         }, 1000)
       },
       error: (error) => {

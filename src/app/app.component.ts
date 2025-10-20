@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
 import { HeaderComponent } from './features/header/header.component';
-import { AuthenticationService } from './core/authentication/services/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -14,15 +13,9 @@ import { AuthenticationService } from './core/authentication/services/authentica
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-
-  title = 'hello-doggo';
-
-  private authenticationService = inject(AuthenticationService);
-
-  constructor(private primeng: PrimeNG) {}
+  #primeng = inject(PrimeNG);
 
   ngOnInit(): void {
-    this.primeng.ripple.set(true);
-    this.authenticationService.initAuthentication();
+    this.#primeng.ripple.set(true);
   }
 }
