@@ -3,7 +3,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HeaderLinkComponent } from './header-link/header-link.component';
 import { AuthenticationService } from '../../core/authentication/services/authentication.service';
 
@@ -14,7 +14,8 @@ import { AuthenticationService } from '../../core/authentication/services/authen
     InputTextModule,
     InputGroupModule,
     InputGroupAddonModule,
-    HeaderLinkComponent
+    HeaderLinkComponent,
+    RouterModule
   ],
   templateUrl: './header.component.html'
 })
@@ -26,10 +27,6 @@ export class HeaderComponent {
   isAuthenticated = this.authenticationService.isAuthenticated;
 
   headerLinks = [
-    {
-      text: 'Home',
-      url: '/home'
-    },
     {
       text: 'Dogs',
       url: '/dog/all'
@@ -58,5 +55,9 @@ export class HeaderComponent {
 
   onLogout() {
     this.authenticationService.logout();
+  }
+
+  goToHomePage() {
+    this.router.navigateByUrl('/home');
   }
 }
