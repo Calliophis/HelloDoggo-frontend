@@ -26,23 +26,13 @@ export class HeaderComponent {
 
   isAuthenticated = this.authenticationService.isAuthenticated;
 
+  role = this.authenticationService.role;
+
   headerLinks = [
     {
       text: 'Dogs',
       url: '/dog/all'
     },
-    {
-      text: 'Volunteer',
-      url: '/volunteer'
-    },
-    {
-      text: 'About us',
-      url: '/about'
-    },
-    {
-      text: 'Contact',
-      url: '/contact'
-    }
   ]
 
   onLogin() {

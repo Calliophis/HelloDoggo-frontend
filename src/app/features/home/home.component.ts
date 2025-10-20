@@ -17,16 +17,4 @@ export class HomeComponent {
   goToDogs() {
     this.router.navigateByUrl('/dog/all');
   }
-
-  goToVolunteer() {
-    this.router.navigateByUrl('/volunteer');
-  }
-
-  goToAbout() {
-    this.router.navigateByUrl('/about');
-  }
-
-  goToContact() {
-    this.router.navigateByUrl('/contact');
-  }
 }

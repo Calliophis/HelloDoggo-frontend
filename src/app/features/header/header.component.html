@@ -12,33 +12,25 @@ class="w-full h-60 object-cover object-[center_30%]"
     
     <nav class="w-4/5 flex items-center justify-around gap-12">
         
-        @for (headerLink of headerLinks; track $index) {
-            <app-header-link [url]="headerLink.url">{{ headerLink.text }}</app-header-link>
-        }
-
-        <p-inputgroup class="flex max-w-1/6">
-            <input 
-            pInputText 
-            type="text" 
-            id="search"
-            placeholder="Search" 
-            class="w-full rounded-r-none">
-            <p-inputgroup-addon>
-                <p-button icon="pi pi-search" aria-label="search" severity="secondary" />
-            </p-inputgroup-addon>
-        </p-inputgroup>
-        
+        <div class="flex gap-6 flex-1">
+            @for (headerLink of headerLinks; track $index) {
+                <app-header-link [url]="headerLink.url">{{ headerLink.text }}</app-header-link>
+            }
+        </div>
         
         @if (!isAuthenticated()) {
             <div class="flex gap-2">
-            <p-button (click)="onSignup()">Sign up</p-button>
-            <p-button severity="secondary" (click)="onLogin()">Log in</p-button>
+                <p-button (click)="onSignup()">Sign up</p-button>
+                <p-button severity="secondary" (click)="onLogin()">Log in</p-button>
             </div>
         }
         @else {
             <div class="flex items-center justify-around gap-12">
-            <app-header-link url="/user/me">My profile</app-header-link>
-            <p-button severity="secondary" (click)="onLogout()">Log out</p-button>
+                @if (role() === 'admin') {
+                    <app-header-link url="/user/all">Manage users</app-header-link>
+                }
+                <app-header-link url="/user/me">My profile</app-header-link>
+                <p-button severity="secondary" (click)="onLogout()">Log out</p-button>
             </div>
         }  
     </nav>
