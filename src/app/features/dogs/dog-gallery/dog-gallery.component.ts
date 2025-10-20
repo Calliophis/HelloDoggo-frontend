@@ -6,14 +6,16 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { DogService } from '../../../core/dogs/dog.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { InfiniteScrollDirective } from "../../../shared/directives/infinite-scroll.directive";
 
 @Component({
   selector: 'app-dog-gallery',
   imports: [
+    InfiniteScrollDirective,
     ProgressSpinnerModule,
     DogCardComponent,
     ButtonModule,
-  ],
+],
   templateUrl: './dog-gallery.component.html'
 })
 export class DogGalleryComponent {
@@ -38,5 +40,11 @@ export class DogGalleryComponent {
 
   createDog() {
     this.router.navigateByUrl('/dog/create');
+  }
+
+  loadMoreDogs() {
+    if (this.dogService.hasMoreDogs()) {
+      this.dogService.loadMoreDogs().subscribe();
+    }
   }
 }
