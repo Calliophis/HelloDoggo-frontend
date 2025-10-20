@@ -21,7 +21,7 @@ describe('DogCardComponent', () => {
     breed: 'Labrador',
     sex: 'male',
     description: 'Friendly dog',
-    img_url: '/images/rex.jpg',
+    imgUrl: '/images/rex.jpg',
     id: 1 
   };
 

@@ -5,13 +5,14 @@ import { Router } from '@angular/router';
 import { LoginDto } from '../models/login.model';
 import { Role } from '../models/role.type';
 import { SignupDto } from '../models/signup.model';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
+  #http = inject(HttpClient);
+  #router = inject(Router);
 
   isAuthenticated = computed<boolean>(() => !!this.#token());
   #token = signal<string | null>(null);
@@ -25,7 +26,7 @@ export class AuthenticationService {
   }
 
   signup(user: SignupDto): Observable<Object> {
-    return this.http.post('http://localhost:3000/auth/signup', user).pipe(
+    return this.#http.post(`${environment.apiUrl}/auth/signup`, user).pipe(
       switchMap(() => {
         const loginUser: LoginDto = {
           email: user.email,
@@ -37,7 +38,7 @@ export class AuthenticationService {
   }
 
   login(user: LoginDto): Observable<{ access_token: string, role: Role }> {
-    return this.http.post<{ access_token: string, role: Role }>('http://localhost:3000/auth/login', user).pipe(
+    return this.#http.post<{ access_token: string, role: Role }>(`${environment.apiUrl}/auth/login`, user).pipe(
       tap(loginResponse => {
         localStorage.setItem('access_token', loginResponse.access_token);
         localStorage.setItem('role', loginResponse.role);
@@ -52,7 +53,7 @@ export class AuthenticationService {
     localStorage.removeItem('role');
     this.updateToken();
     this.updateRole();
-    this.router.navigateByUrl('/auth/login');
+    this.#router.navigateByUrl('/auth/login');
   }
 
   private updateToken(): void {

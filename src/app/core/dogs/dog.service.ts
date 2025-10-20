@@ -5,12 +5,13 @@ import { Dog } from './dog.model';
 import { FormGroup } from '@angular/forms';
 import { CreateDogForm } from '../../features/dogs/create-dog/create-dog-form.model';
 import { PaginationDto } from '../../shared/models/pagination.model';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DogService {
-  private http = inject(HttpClient);
+  #http = inject(HttpClient);
 
   #dogs = signal<Dog[]>([]);
   dogs = this.#dogs.asReadonly();
@@ -60,12 +61,12 @@ export class DogService {
 
   getAllDogs(): Observable<void> {
     this.#isLoading.set(true);
-    let url = 'http://localhost:3000/dog/all'
+    let url = `${environment.apiUrl}/dog/all`;
     if (this.#pagination.page > 0) {
-      url = `http://localhost:3000/dog/all?page=${this.#pagination.page}&elementsPerPage=${this.#pagination.elementsPerPage}`;
+      url = `${environment.apiUrl}/dog/all?page=${this.#pagination.page}&elementsPerPage=${this.#pagination.elementsPerPage}`;
     }
     
-    return this.http.get<{paginatedItems: Dog[], totalNumberOfItems: number}>(url).pipe(
+    return this.#http.get<{paginatedItems: Dog[], totalNumberOfItems: number}>(url).pipe(
       map(dogResponse => {
         this.#dogs.update(currentDogs => {
           return [...currentDogs, ...dogResponse.paginatedItems];
@@ -80,27 +81,27 @@ export class DogService {
   }
 
   getDogById(id: number): Observable<Dog> {
-    return this.http.get<Dog>(`http://localhost:3000/dog/${id}`);
+    return this.#http.get<Dog>(`${environment.apiUrl}/dog/${id}`);
   }
 
   createDog(newDog: FormData): Observable<any> {
-    return this.http.post('http://localhost:3000/dog/create', newDog);
+    return this.#http.post(`${environment.apiUrl}/dog/create`, newDog);
   }
 
   updateDogInfo(dog: Partial<Dog>, id: number): Observable<any> {
-    return this.http.patch(`http://localhost:3000/dog/${id}`, dog).pipe(
+    return this.#http.patch(`${environment.apiUrl}/dog/${id}`, dog).pipe(
       switchMap(() => this.getAllDogs())
     );
   }
 
   updateDogImage(formData: FormData, id: number): Observable<any> {
-    return this.http.patch(`http://localhost:3000/dog/${id}/image`, formData).pipe(
+    return this.#http.patch(`${environment.apiUrl}/dog/${id}/image`, formData).pipe(
       switchMap(() => this.getAllDogs())
     );
   }
 
   deleteDog(id: number) {
-    return this.http.delete(`http://localhost:3000/dog/${id}`).pipe(
+    return this.#http.delete(`${environment.apiUrl}/dog/${id}`).pipe(
       switchMap(() => this.getAllDogs())
     );
   }

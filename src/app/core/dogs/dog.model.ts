@@ -4,5 +4,5 @@ export interface Dog {
     sex: 'male'|'female';
     breed: string;
     description: string;
-    img_url: string;
+    imgUrl: string;
 }

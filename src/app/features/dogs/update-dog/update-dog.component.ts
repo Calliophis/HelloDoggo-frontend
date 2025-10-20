@@ -15,6 +15,7 @@ import { WhiteSpaceValidator } from '../../../shared/validators/white-space.vali
 import { DialogModule } from 'primeng/dialog';
 import { UpdateDogForm } from './update-dog-form.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-update-dog',
@@ -152,6 +153,10 @@ export class UpdateDogComponent implements OnInit {
   deleteDog() {
     this.isLoading.set(true);
     return this.dogService.deleteDog(this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  getImageUrl(path: string): string {
+    return `${environment.apiUrl}${path}`;
   }
 }
 
