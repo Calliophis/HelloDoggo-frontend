@@ -19,10 +19,10 @@ export class UserService {
   #users = signal<User[]>([]);
   users = this.#users.asReadonly();
 
-  #pagination: PaginationDto = {
+  #pagination= signal<PaginationDto>({
     page: 1,
     elementsPerPage: 12
-  }
+  })
   #hasMoreUsers = signal(true);
   hasMoreUsers = this.#hasMoreUsers.asReadonly();
 
@@ -49,14 +49,14 @@ export class UserService {
   }
 
   loadMoreUsers() {
-    this.#pagination.page++;
+    this.#pagination().page++;
     return this.getAllUsers();
   }
 
   getAllUsers() {
     let url = `${environment.apiUrl}/user/all`;
-    if (this.#pagination.page > 0) {
-      url = `${environment.apiUrl}/user/all?page=${this.#pagination.page}&elementsPerPage=${this.#pagination.elementsPerPage}`;
+    if (this.#pagination().page > 0) {
+      url = `${environment.apiUrl}/user/all?page=${this.#pagination().page}&elementsPerPage=${this.#pagination().elementsPerPage}`;
     }
 
     return this.#http.get<{ paginatedItems: User[], totalNumberOfItems: number }>(url).pipe(
@@ -78,6 +78,10 @@ export class UserService {
 
   updateUser(updatedUser: Partial<User>): Observable<Object> {
     return this.#http.patch(`${environment.apiUrl}/user/me`, updatedUser);
+  }
+
+  updateUserById(id: number, updatedUser: Partial<User>): Observable<Object> {
+    return this.#http.patch(`${environment.apiUrl}/user/${id}`, updatedUser);
   }
 
   deleteOwnAccount(): Observable<Object> {

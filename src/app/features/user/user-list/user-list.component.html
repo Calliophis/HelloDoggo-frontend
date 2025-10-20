@@ -1,0 +1,27 @@
+@if (isLoading()) {
+    <p-progress-spinner></p-progress-spinner>
+}
+<p-table [value]="users()">
+    <ng-template #header>
+        <tr>
+            <th>Id</th>
+            <th>FirstName</th>
+            <th>LastName</th>
+            <th>Email</th>
+            <th>Role</th>
+        </tr>
+        
+    </ng-template>
+    <ng-template #body let-user>
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+                <p-select appendTo="body" [options]="roles()" [disabled]="checkIfOwnRole(user.id)" [ngModel]="user.role" (onChange)="changeRole(user.id, $event.value)"></p-select>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { editorGuard } from './core/authentication/guards/editor.guard';
 import { authenticationGuard } from './core/authentication/guards/authentication.guard';
+import { adminGuard } from './core/authentication/guards/admin.guard';
 
 export const routes: Routes = [
     
@@ -29,6 +30,11 @@ export const routes: Routes = [
         path: 'user/me',
         loadComponent: () => import('./features/user/update-profile/update-profile.component').then(c => c.UpdateProfileComponent),
         canActivate: [authenticationGuard]
+    },
+    {
+        path: 'user/all',
+        loadComponent: () => import('./features/user/user-list/user-list.component').then(c => c.UserListComponent),
+        canActivate: [adminGuard]
     },
     {
         path: '**',
