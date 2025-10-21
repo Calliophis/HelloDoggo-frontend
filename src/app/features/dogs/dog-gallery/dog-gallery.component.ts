@@ -30,6 +30,7 @@ export class DogGalleryComponent {
   isLoading = signal(false);
 
   constructor() {
+    if (this.dogs().length > 0) return;
     this.isLoading.set(true);
     this.dogService.initDogs().pipe(takeUntilDestroyed()).subscribe({
       next: () => {
