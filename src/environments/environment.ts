@@ -1,3 +1,3 @@
 export const environment = {
-    apiUrl: '',
+    apiUrl: 'https://hello-doggo-backend.vercel.app',
 };
