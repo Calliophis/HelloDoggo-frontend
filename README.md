@@ -1,4 +1,47 @@
 # HelloDoggo
+**WORK IN PROGRESS**
+
+**FRENCH**
+Développement d'une plateforme d'adoption de chiens à destination de refuges. 
+
+- Affichage des chiens disponibles à l'adoption sous forme de cartes avec photo, nom, race, sexe et description. 
+
+- Création de compte et système d'authentification avec token encrypté envoyé par le backend. 
+
+- Role-based permissions : admin, editor, user : 
+
+-- Les profils editor et admin peuvent créer, modifier et supprimer des chiens. 
+-- Le profil admin peut avoir accès aux informations des autres utilisateurs et modifier leur rôle pour leur accorder plus de permissions. 
+-- Tous les profils peuvent consulter et modifier leurs propres informations. Ils peuvent également supprimer leur propre compte.
+
+-- Pour naviguer dans l'application avec les divers profils: 
+--- s'authentifier avec admin@hellodoggo.com pour avoir le role admin 
+--- s'authentifier avec volunteer@doggorescue.com pour avoir le role editor 
+--- s'authentifier avec user@email.com ou créer un nouveau compte pour avoir le role user 
+---- Le mot de passe pour les trois comptes est Passw0rd!
+
+Pour le backend, développé en NestJS, voir `https://github.com/Calliophis/HelloDoggo-backend`
+
+**ENGLISH**
+Development of a dog adoption platform for animal shelters.
+
+- Display of adoptable dogs as cards showing a photo, name, breed, sex, and description.
+
+- Account creation and authentication system with an encrypted token sent by the backend.
+
+- Role-based permissions: admin, editor, user:
+
+-- Editor and Admin profiles can create, edit, and delete dogs.
+-- The Admin profile can access other users’ information and modify their roles to grant additional permissions.
+-- All profiles can view and update their own information, and also delete their own account.
+
+-- To navigate the app with different profiles:
+--- log in with admin@hellodoggo.com to access the Admin role
+--- log in with volunteer@doggorescue.com to access the Editor role
+--- log in with user@email.com or create a new account to access the User role
+---- The password for all accounts is Passw0rd!
+
+For the backend, developed in NestJS, see `https://github.com/Calliophis/HelloDoggo-backend`
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.2.
 
