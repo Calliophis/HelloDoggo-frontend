@@ -34,22 +34,22 @@ export class PasswordInputComponent implements ControlValueAccessor, Validator {
   hasFeedback = input<boolean, string | boolean>(false, { transform: booleanAttribute });
   label = input<string>('Password');
   
-  password: string = '';
+  password = '';
   rules = passwordRules;
   isDisabled = signal(false);
 
-  onChange = (value: string) => {};
-  onTouched = () => {};
+  onChange!: (value: string) => void;
+  onTouched!: () => void;
 
   writeValue(value: string): void {
     this.password = value || '';
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 

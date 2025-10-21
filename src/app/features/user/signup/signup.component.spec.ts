@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SignupComponent } from './signup.component';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 
 class MockAuthenticationService {
   signup = jasmine.createSpy('signup').and.returnValue({
-    subscribe: ({ next, error }: any) => {
-      error({ status: 401 });
+    subscribe: () => {
+      return new HttpErrorResponse({ status: 401 });
     }
   });
 }

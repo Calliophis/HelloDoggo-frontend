@@ -1,4 +1,4 @@
-export type PasswordRule = {
+export interface PasswordRule {
     key: string;
     label: string;
     check: (value: string) => boolean;

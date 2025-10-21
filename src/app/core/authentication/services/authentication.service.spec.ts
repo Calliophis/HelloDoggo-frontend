@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { provideHttpClient } from "@angular/common/http";
 import { provideRouter } from "@angular/router";
 import { routes } from "../../../app.routes";
@@ -34,9 +34,5 @@ describe('AuthenticationService', () => {
     it('should return isAuthenticated as false when token is null', () => {
         service.token = signal<string | null>(null);
         expect(service.isAuthenticated()).toBeFalse();
-    });
-
-    it('should update token and role on login', () => {
-        
     });
 })

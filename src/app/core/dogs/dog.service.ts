@@ -84,23 +84,23 @@ export class DogService {
     return this.#http.get<Dog>(`${environment.apiUrl}/dog/${id}`);
   }
 
-  createDog(newDog: FormData): Observable<any> {
+  createDog(newDog: FormData): Observable<object> {
     return this.#http.post(`${environment.apiUrl}/dog/create`, newDog);
   }
 
-  updateDogInfo(dog: Partial<Dog>, id: number): Observable<any> {
+  updateDogInfo(dog: Partial<Dog>, id: number): Observable<void> {
     return this.#http.patch(`${environment.apiUrl}/dog/${id}`, dog).pipe(
       switchMap(() => this.getAllDogs())
     );
   }
 
-  updateDogImage(formData: FormData, id: number): Observable<any> {
+  updateDogImage(formData: FormData, id: number): Observable<void> {
     return this.#http.patch(`${environment.apiUrl}/dog/${id}/image`, formData).pipe(
       switchMap(() => this.getAllDogs())
     );
   }
 
-  deleteDog(id: number) {
+  deleteDog(id: number): Observable<void> {
     return this.#http.delete(`${environment.apiUrl}/dog/${id}`).pipe(
       switchMap(() => this.getAllDogs())
     );

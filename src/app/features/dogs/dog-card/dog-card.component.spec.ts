@@ -15,7 +15,6 @@ class MockAuthenticationService {
 describe('DogCardComponent', () => {
   let component: DogCardComponent;
   let fixture: ComponentFixture<DogCardComponent>;
-  let authenticationService: MockAuthenticationService;
   const mockDog: Dog = {
     name: 'Rex',
     breed: 'Labrador',
@@ -38,7 +37,6 @@ describe('DogCardComponent', () => {
     .compileComponents();
 
     fixture = TestBed.createComponent(DogCardComponent);
-    authenticationService = TestBed.inject(AuthenticationService) as unknown as MockAuthenticationService;
     component = fixture.componentInstance;
     fixture.componentRef.setInput('dog', mockDog)
     fixture.detectChanges();

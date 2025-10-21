@@ -76,15 +76,15 @@ export class UserService {
     return this.#http.get<User>(`${environment.apiUrl}/user/me`);
   }
 
-  updateUser(updatedUser: Partial<User>): Observable<Object> {
+  updateUser(updatedUser: Partial<User>): Observable<object> {
     return this.#http.patch(`${environment.apiUrl}/user/me`, updatedUser);
   }
 
-  updateUserById(id: number, updatedUser: Partial<User>): Observable<Object> {
+  updateUserById(id: number, updatedUser: Partial<User>): Observable<object> {
     return this.#http.patch(`${environment.apiUrl}/user/${id}`, updatedUser);
   }
 
-  deleteOwnAccount(): Observable<Object> {
+  deleteOwnAccount(): Observable<object> {
     return this.#http.delete(`${environment.apiUrl}/user/me`);
   }
 }

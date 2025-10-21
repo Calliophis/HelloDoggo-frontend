@@ -36,8 +36,8 @@ export class ImageInputComponent implements ControlValueAccessor {
     return !!this.previewUrl();
   })
 
-  onChange = (value: File | null) => {};
-  onTouched = () => {};
+  onChange!: (value: File | null) => void;
+  onTouched!: () => void;
 
   writeValue(value: File | null): void {
     this.selectedFile.set(value);
@@ -46,11 +46,11 @@ export class ImageInputComponent implements ControlValueAccessor {
     }
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: File | null) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
