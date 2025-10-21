@@ -7,6 +7,7 @@ import { providePrimeNG } from 'primeng/config';
 import { AmberPreset } from './amber-preset';
 import { authenticationInterceptor } from './core/authentication/authentication.interceptor';
 import { AuthenticationService } from './core/authentication/services/authentication.service';
+import { catchError, of } from 'rxjs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,7 +27,9 @@ export const appConfig: ApplicationConfig = {
     }),
     provideAppInitializer(() => {
       const authenticationService = inject(AuthenticationService);
-      return authenticationService.initAuthentication();
+      return authenticationService.initAuthentication().pipe(
+        catchError(() => of({}))
+      );
     }),
   ]
 };
