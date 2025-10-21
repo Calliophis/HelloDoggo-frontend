@@ -5,7 +5,7 @@ import { map, Observable } from 'rxjs';
 import { UpdateProfileForm } from '../../../features/user/update-profile/update-profile-form.model';
 import { FormGroup } from '@angular/forms';
 import { PaginationDto } from '../../../shared/models/pagination.model';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

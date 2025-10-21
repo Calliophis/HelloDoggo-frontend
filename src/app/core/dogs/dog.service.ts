@@ -5,7 +5,7 @@ import { Dog } from './dog.model';
 import { FormGroup } from '@angular/forms';
 import { CreateDogForm } from '../../features/dogs/create-dog/create-dog-form.model';
 import { PaginationDto } from '../../shared/models/pagination.model';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

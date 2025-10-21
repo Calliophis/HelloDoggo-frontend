@@ -6,7 +6,7 @@ import { DialogModule } from 'primeng/dialog';
 import { UpdateDogComponent } from '../update-dog/update-dog.component';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { Dog } from '../../../core/dogs/dog.model';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-dog-card',

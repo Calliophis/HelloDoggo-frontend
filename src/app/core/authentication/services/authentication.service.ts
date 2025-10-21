@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { LoginDto } from '../models/login.model';
 import { Role } from '../models/role.type';
 import { SignupDto } from '../models/signup.model';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { UserService } from './user.service';
 
 @Injectable({
