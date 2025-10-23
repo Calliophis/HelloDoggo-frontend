@@ -19,9 +19,9 @@ export class UserService {
   #users = signal<User[]>([]);
   users = this.#users.asReadonly();
 
-  #pagination= signal<PaginationDto>({
-    page: 1,
-    elementsPerPage: 12
+  #pagination = signal<PaginationDto>({
+    skip: 0,
+    take: 8
   })
   #hasMoreUsers = signal(true);
   hasMoreUsers = this.#hasMoreUsers.asReadonly();
@@ -49,22 +49,22 @@ export class UserService {
   }
 
   loadMoreUsers() {
-    this.#pagination().page++;
+    this.#pagination().skip += this.#pagination().take;
     return this.getAllUsers();
   }
 
   getAllUsers() {
-    let url = `${environment.apiUrl}/user/all`;
-    if (this.#pagination().page > 0) {
-      url = `${environment.apiUrl}/user/all?page=${this.#pagination().page}&elementsPerPage=${this.#pagination().elementsPerPage}`;
+    let url = `${environment.apiUrl}/user/all?take=${this.#pagination().take}`;
+    if (this.#pagination().skip > 0) {
+      url = `${environment.apiUrl}/user/all?skip=${this.#pagination().skip}&take=${this.#pagination().take}`;
     }
 
-    return this.#http.get<{ paginatedItems: User[], totalNumberOfItems: number }>(url).pipe(
+    return this.#http.get<{ users: User[], totalUsers: number }>(url).pipe(
       map(userResponse => {
         this.#users.update(currentUsers => {
-          return [...currentUsers, ...userResponse.paginatedItems]
+          return [...currentUsers, ...userResponse.users]
         })
-        if (this.#users().length >= userResponse.totalNumberOfItems) {
+        if (this.#users().length >= userResponse.totalUsers) {
           this.#hasMoreUsers.set(false);
         }
         return;

@@ -15,10 +15,11 @@ export class DogService {
 
   #dogs = signal<Dog[]>([]);
   dogs = this.#dogs.asReadonly();
-  #pagination: PaginationDto = {
-    page: 1,
-    elementsPerPage: 12
-  }
+
+  #pagination = signal<PaginationDto>({
+    skip: 0,
+    take: 8
+  }); 
   #hasMoreDogs = signal(true);
   hasMoreDogs = this.#hasMoreDogs.asReadonly();
   #isLoading = signal(false);
@@ -55,23 +56,23 @@ export class DogService {
   }
 
   loadMoreDogs(): Observable<void> {
-    this.#pagination.page++;
+    this.#pagination().skip += this.#pagination().take;
     return this.getAllDogs();
   }
 
   getAllDogs(): Observable<void> {
     this.#isLoading.set(true);
-    let url = `${environment.apiUrl}/dog/all`;
-    if (this.#pagination.page > 0) {
-      url = `${environment.apiUrl}/dog/all?page=${this.#pagination.page}&elementsPerPage=${this.#pagination.elementsPerPage}`;
+    let url = `${environment.apiUrl}/dog/all?take=${this.#pagination().take}`;
+    if (this.#pagination().skip > 0) {
+      url = `${environment.apiUrl}/dog/all?skip=${this.#pagination().skip}&take=${this.#pagination().take}`;
     }
     
-    return this.#http.get<{paginatedItems: Dog[], totalNumberOfItems: number}>(url).pipe(
+    return this.#http.get<{ dogs: Dog[], totalDogs: number}>(url).pipe(
       map(dogResponse => {
         this.#dogs.update(currentDogs => {
-          return [...currentDogs, ...dogResponse.paginatedItems];
+          return [...currentDogs, ...dogResponse.dogs];
         });
-        if (this.#dogs().length >= dogResponse.totalNumberOfItems) {
+        if (this.#dogs().length >= dogResponse.totalDogs) {
           this.#hasMoreDogs.set(false);
         }
         return;

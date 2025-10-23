@@ -5,7 +5,7 @@
             <img 
                 alt="dog image" 
                 class="w-full object-cover" 
-                [src]="getImageUrl(dog().imgUrl)">
+                [src]="dog().imgUrl">
         </div>
         @if (role() === 'admin' || role() === 'editor') {
             <div class="flex justify-center items-center absolute top-3 right-3 bg-white rounded-4xl w-7 h-7">
