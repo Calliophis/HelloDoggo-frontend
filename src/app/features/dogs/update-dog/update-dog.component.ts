@@ -134,9 +134,7 @@ export class UpdateDogComponent implements OnInit {
         this.isLoading.set(false);
         this.updateDogForm.enable();
         this.successMessage.set('Dog updated');
-        setTimeout(() => {
-          this.submitEvent.emit();
-        }, 1000);
+        this.submitEvent.emit();
       },
       error: () => {
         this.isLoading.set(false);

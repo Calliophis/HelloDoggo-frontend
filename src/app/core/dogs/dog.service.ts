@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { map, Observable, switchMap, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { Dog } from './dog.model';
 import { FormGroup } from '@angular/forms';
 import { CreateDogForm } from '../../features/dogs/create-dog/create-dog-form.model';
@@ -27,6 +27,13 @@ export class DogService {
 
 
   initDogs(): Observable<void> {
+    return this.getAllDogs();
+  }
+
+  refreshDogs(): Observable<void> {
+    this.#dogs.set([]);
+    this.#hasMoreDogs.set(true);
+    this.#pagination.set({skip: 0, take: this.#pagination().take});
     return this.getAllDogs();
   }
 
@@ -81,29 +88,31 @@ export class DogService {
     );
   }
 
-  getDogById(id: number): Observable<Dog> {
+  getDogById(id: string): Observable<Dog> {
     return this.#http.get<Dog>(`${environment.apiUrl}/dog/${id}`);
   }
 
   createDog(newDog: FormData): Observable<object> {
-    return this.#http.post(`${environment.apiUrl}/dog/create`, newDog);
+    return this.#http.post(`${environment.apiUrl}/dog/create`, newDog).pipe(
+      tap(() => this.refreshDogs())
+    );
   }
 
-  updateDogInfo(dog: Partial<Dog>, id: number): Observable<void> {
+  updateDogInfo(dog: Partial<Dog>, id: string): Observable<object> {
     return this.#http.patch(`${environment.apiUrl}/dog/${id}`, dog).pipe(
-      switchMap(() => this.getAllDogs())
+      tap(() => this.refreshDogs())
     );
   }
 
-  updateDogImage(formData: FormData, id: number): Observable<void> {
-    return this.#http.patch(`${environment.apiUrl}/dog/${id}/image`, formData).pipe(
-      switchMap(() => this.getAllDogs())
+  updateDogImage(formData: FormData, id: string): Observable<object> {
+    return this.#http.patch(`${environment.apiUrl}/dog/${id}`, formData).pipe(
+      tap(() => this.refreshDogs())
     );
   }
 
-  deleteDog(id: number): Observable<void> {
+  deleteDog(id: string): Observable<object> {
     return this.#http.delete(`${environment.apiUrl}/dog/${id}`).pipe(
-      switchMap(() => this.getAllDogs())
+      tap(() => this.refreshDogs())
     );
   }
 }
