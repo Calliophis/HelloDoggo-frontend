@@ -6,7 +6,6 @@ import { DialogModule } from 'primeng/dialog';
 import { UpdateDogComponent } from '../update-dog/update-dog.component';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { Dog } from '../../../core/dogs/dog.model';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-dog-card',
@@ -32,9 +31,5 @@ export class DogCardComponent {
 
   closeDialog() {
     this.isVisible.set(false);
-  }
-
-  getImageUrl(path: string): string {
-    return `${environment.apiUrl}${path}`;
   }
 }

@@ -1,12 +1,10 @@
 <p-card class="flex justify-center m-5 w-[400px] h-[400px] relative">
     
     <ng-template #header>
-        <div class=" flex justify-center items-center w-full h-[250px] overflow-hidden rounded-t-xl relative">
-            <img 
-                alt="dog image" 
-                class="w-full object-cover" 
-                [src]="getImageUrl(dog().imgUrl)">
-        </div>
+        <img 
+            alt="dog image" 
+            class="h-[250px] w-[400px] rounded-t-xl object-cover" 
+            [src]="dog().imgUrl">
         @if (role() === 'admin' || role() === 'editor') {
             <div class="flex justify-center items-center absolute top-3 right-3 bg-white rounded-4xl w-7 h-7">
                 <button type="button" (click)="showDialog()">

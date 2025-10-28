@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, model, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
@@ -16,6 +16,8 @@ import { WhiteSpaceValidator } from '../../../shared/validators/white-space.vali
 import { PasswordInputComponent } from '../components/password-input/password-input.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpdateProfileForm } from './update-profile-form.model';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DeleteDialogComponent } from '../components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-update-profile',
@@ -31,15 +33,18 @@ import { UpdateProfileForm } from './update-profile-form.model';
     FormsModule,
     CardModule
   ],
+  providers: [DialogService],
   templateUrl: './update-profile.component.html'
 })
 export class UpdateProfileComponent implements OnInit {
+  ref: DynamicDialogRef | undefined;
 
   private errorMessageService = inject(ErrorMessageService);
   private userService = inject(UserService);
   private authenticationService = inject(AuthenticationService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  public dialogService = inject(DialogService);
 
   user = this.userService.user;
 
@@ -47,8 +52,6 @@ export class UpdateProfileComponent implements OnInit {
   isLoading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
-
-  isVisible = model<boolean>(false);
 
   updateProfileForm = new FormGroup<UpdateProfileForm>({
       firstName: new FormControl('', { validators: [Validators.minLength(2), WhiteSpaceValidator()], nonNullable: true }),
@@ -90,7 +93,7 @@ export class UpdateProfileComponent implements OnInit {
     const updatedUser = this.userService.filterUpdateForm(this.updateProfileForm);
     
     this.isLoading.set(true);
-    return this.userService.updateUser(updatedUser).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    return this.userService.updateOwnProfile(updatedUser).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.successMessage.set('Information updated');
@@ -112,11 +115,17 @@ export class UpdateProfileComponent implements OnInit {
   }
 
   showDialog() {
-    this.isVisible.set(true);
-  }
+    this.ref = this.dialogService.open(DeleteDialogComponent, {
+      header: 'Are you sure?',
+      width: '20rem',
+      modal: true, 
+    });
 
-  cancelDelete() {
-    this.isVisible.set(false);
+    this.ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
+      if (confirmed) {
+        this.deleteProfile()
+      }
+    })
   }
 
   deleteProfile() {
@@ -124,7 +133,6 @@ export class UpdateProfileComponent implements OnInit {
     return this.userService.deleteOwnAccount().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.isVisible.set(false);
         this.successMessage.set('Account deleted');
         setTimeout(() => {
           this.successMessage.set(null);
@@ -134,7 +142,6 @@ export class UpdateProfileComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        this.isVisible.set(false);
         this.errorMessage.set('An error occured. Please try later')
       }
     }); 

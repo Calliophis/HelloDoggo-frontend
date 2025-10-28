@@ -11,7 +11,7 @@ Développement d'une plateforme d'adoption de chiens à destination de refuges.
 - Role-based permissions : admin, editor, user : 
 
 -- Les profils editor et admin peuvent créer, modifier et supprimer des chiens. 
--- Le profil admin peut avoir accès aux informations des autres utilisateurs et modifier leur rôle pour leur accorder plus de permissions. 
+-- Le profil admin peut avoir accès aux informations des autres utilisateurs, modifier leur rôle et les supprimer.
 -- Tous les profils peuvent consulter et modifier leurs propres informations. Ils peuvent également supprimer leur propre compte.
 
 -- Pour naviguer dans l'application avec les divers profils: 
@@ -32,7 +32,7 @@ Development of a dog adoption platform for animal shelters.
 - Role-based permissions: admin, editor, user:
 
 -- Editor and Admin profiles can create, edit, and delete dogs.
--- The Admin profile can access other users’ information and modify their roles to grant additional permissions.
+-- The Admin profile can access other users’ information, modify their role and delete their account.
 -- All profiles can view and update their own information, and also delete their own account.
 
 -- To navigate the app with different profiles:

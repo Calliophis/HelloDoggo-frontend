@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { map, Observable, switchMap, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { Dog } from './dog.model';
 import { FormGroup } from '@angular/forms';
 import { CreateDogForm } from '../../features/dogs/create-dog/create-dog-form.model';
@@ -15,17 +15,22 @@ export class DogService {
 
   #dogs = signal<Dog[]>([]);
   dogs = this.#dogs.asReadonly();
-  #pagination: PaginationDto = {
-    page: 1,
-    elementsPerPage: 12
-  }
+
+  #pagination = signal<PaginationDto>({
+    skip: 0,
+    take: 8
+  }); 
   #hasMoreDogs = signal(true);
   hasMoreDogs = this.#hasMoreDogs.asReadonly();
-  #isLoading = signal(false);
-  isLoading = this.#isLoading.asReadonly();
-
 
   initDogs(): Observable<void> {
+    return this.getAllDogs();
+  }
+
+  refreshDogs(): Observable<void> {
+    this.#dogs.set([]);
+    this.#hasMoreDogs.set(true);
+    this.#pagination.set({skip: 0, take: this.#pagination().take});
     return this.getAllDogs();
   }
 
@@ -55,54 +60,54 @@ export class DogService {
   }
 
   loadMoreDogs(): Observable<void> {
-    this.#pagination.page++;
+    this.#pagination().skip += this.#pagination().take;
     return this.getAllDogs();
   }
 
   getAllDogs(): Observable<void> {
-    this.#isLoading.set(true);
-    let url = `${environment.apiUrl}/dog/all`;
-    if (this.#pagination.page > 0) {
-      url = `${environment.apiUrl}/dog/all?page=${this.#pagination.page}&elementsPerPage=${this.#pagination.elementsPerPage}`;
+    let url = `${environment.apiUrl}/dog/all?take=${this.#pagination().take}`;
+    if (this.#pagination().skip > 0) {
+      url = `${environment.apiUrl}/dog/all?skip=${this.#pagination().skip}&take=${this.#pagination().take}`;
     }
     
-    return this.#http.get<{paginatedItems: Dog[], totalNumberOfItems: number}>(url).pipe(
+    return this.#http.get<{ dogs: Dog[], totalDogs: number}>(url).pipe(
       map(dogResponse => {
         this.#dogs.update(currentDogs => {
-          return [...currentDogs, ...dogResponse.paginatedItems];
+          return [...currentDogs, ...dogResponse.dogs];
         });
-        if (this.#dogs().length >= dogResponse.totalNumberOfItems) {
+        if (this.#dogs().length >= dogResponse.totalDogs) {
           this.#hasMoreDogs.set(false);
         }
         return;
-      }),
-      tap(() => this.#isLoading.set(false))
+      })
     );
   }
 
-  getDogById(id: number): Observable<Dog> {
+  getDogById(id: string): Observable<Dog> {
     return this.#http.get<Dog>(`${environment.apiUrl}/dog/${id}`);
   }
 
   createDog(newDog: FormData): Observable<object> {
-    return this.#http.post(`${environment.apiUrl}/dog/create`, newDog);
+    return this.#http.post(`${environment.apiUrl}/dog/create`, newDog).pipe(
+      tap(() => this.refreshDogs())
+    );
   }
 
-  updateDogInfo(dog: Partial<Dog>, id: number): Observable<void> {
+  updateDogInfo(dog: Partial<Dog>, id: string): Observable<object> {
     return this.#http.patch(`${environment.apiUrl}/dog/${id}`, dog).pipe(
-      switchMap(() => this.getAllDogs())
+      tap(() => this.refreshDogs())
     );
   }
 
-  updateDogImage(formData: FormData, id: number): Observable<void> {
-    return this.#http.patch(`${environment.apiUrl}/dog/${id}/image`, formData).pipe(
-      switchMap(() => this.getAllDogs())
+  updateDogImage(formData: FormData, id: string): Observable<object> {
+    return this.#http.patch(`${environment.apiUrl}/dog/${id}`, formData).pipe(
+      tap(() => this.refreshDogs())
     );
   }
 
-  deleteDog(id: number): Observable<void> {
+  deleteDog(id: string): Observable<object> {
     return this.#http.delete(`${environment.apiUrl}/dog/${id}`).pipe(
-      switchMap(() => this.getAllDogs())
+      tap(() => this.refreshDogs())
     );
   }
 }

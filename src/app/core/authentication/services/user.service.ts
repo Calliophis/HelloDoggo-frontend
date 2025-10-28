@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../models/user.model';
-import { map, Observable } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { UpdateProfileForm } from '../../../features/user/update-profile/update-profile-form.model';
 import { FormGroup } from '@angular/forms';
 import { PaginationDto } from '../../../shared/models/pagination.model';
@@ -19,15 +19,15 @@ export class UserService {
   #users = signal<User[]>([]);
   users = this.#users.asReadonly();
 
-  #pagination= signal<PaginationDto>({
-    page: 1,
-    elementsPerPage: 12
+  #pagination = signal<PaginationDto>({
+    skip: 0,
+    take: 8
   })
   #hasMoreUsers = signal(true);
   hasMoreUsers = this.#hasMoreUsers.asReadonly();
 
   initUser(): Observable<void> {
-    return this.getUser().pipe(
+    return this.getOwnProfile().pipe(
       map(userResponse => {
         this.#user.set(userResponse);
         return;
@@ -36,6 +36,13 @@ export class UserService {
   }
 
   initAllUsers(): Observable<void> {
+    return this.getAllUsers();
+  }
+
+  refreshUsers(): Observable<void> {
+    this.#users.set([]);
+    this.#hasMoreUsers.set(true);
+    this.#pagination.set({skip: 0, take: this.#pagination().take});
     return this.getAllUsers();
   }
 
@@ -49,22 +56,22 @@ export class UserService {
   }
 
   loadMoreUsers() {
-    this.#pagination().page++;
+    this.#pagination().skip += this.#pagination().take;
     return this.getAllUsers();
   }
 
   getAllUsers() {
-    let url = `${environment.apiUrl}/user/all`;
-    if (this.#pagination().page > 0) {
-      url = `${environment.apiUrl}/user/all?page=${this.#pagination().page}&elementsPerPage=${this.#pagination().elementsPerPage}`;
+    let url = `${environment.apiUrl}/user/all?take=${this.#pagination().take}`;
+    if (this.#pagination().skip > 0) {
+      url = `${environment.apiUrl}/user/all?skip=${this.#pagination().skip}&take=${this.#pagination().take}`;
     }
 
-    return this.#http.get<{ paginatedItems: User[], totalNumberOfItems: number }>(url).pipe(
+    return this.#http.get<{ users: User[], totalUsers: number }>(url).pipe(
       map(userResponse => {
         this.#users.update(currentUsers => {
-          return [...currentUsers, ...userResponse.paginatedItems]
+          return [...currentUsers, ...userResponse.users]
         })
-        if (this.#users().length >= userResponse.totalNumberOfItems) {
+        if (this.#users().length >= userResponse.totalUsers) {
           this.#hasMoreUsers.set(false);
         }
         return;
@@ -72,19 +79,27 @@ export class UserService {
     );
   }
 
-  getUser(): Observable<User> {
+  getOwnProfile(): Observable<User> {
     return this.#http.get<User>(`${environment.apiUrl}/user/me`);
   }
 
-  updateUser(updatedUser: Partial<User>): Observable<object> {
-    return this.#http.patch(`${environment.apiUrl}/user/me`, updatedUser);
+  updateOwnProfile(updatedUser: Partial<User>): Observable<object> {
+    return this.#http.patch(`${environment.apiUrl}/user/me`, updatedUser)
   }
 
-  updateUserById(id: number, updatedUser: Partial<User>): Observable<object> {
-    return this.#http.patch(`${environment.apiUrl}/user/${id}`, updatedUser);
+  updateUserById(id: string, updatedUser: Partial<User>): Observable<void> {
+    return this.#http.patch(`${environment.apiUrl}/user/${id}`, updatedUser).pipe(
+      switchMap(() => this.refreshUsers())
+    );
   }
 
   deleteOwnAccount(): Observable<object> {
     return this.#http.delete(`${environment.apiUrl}/user/me`);
+  }
+
+  deleteUser(id: string): Observable<void> {
+    return this.#http.delete(`${environment.apiUrl}/user/${id}`).pipe(
+      switchMap(() => this.refreshUsers())
+    );
   }
 }

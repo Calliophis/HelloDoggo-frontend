@@ -71,7 +71,7 @@
             </button>
             <div class="flex justify-center items-center z-1 mt-2 rounded-md w-40 h-25 overflow-hidden">
                 <img 
-                [src]="getImageUrl(dog().imgUrl)" 
+                [src]="dog().imgUrl" 
                 alt="Preview"
                 class="w-full object-cover">
             </div> 
@@ -100,13 +100,5 @@
     <app-image-input [formControl]="imageInput" />
     <div class="flex justify-center w-75 mt-5">
         <p-button type="button" severity="success" [loading]="isLoading()" (onClick)="updateImage()">Update image</p-button>
-    </div>
-</p-dialog>
-
-<p-dialog header="Are you sure?" [modal]="true" [(visible)]="isVisibleDeleteDialog" [style]="{ width: '20rem' }">
-    <p class="text-center">This will permanently delete this dog.</p>
-    <div class="flex justify-center gap-3 mt-5">
-        <p-button type="button" severity="secondary" (click)="cancelDelete()">Cancel</p-button>
-        <p-button type="button" severity="danger" (onClick)="deleteDog()" [loading]="isLoading()">Delete</p-button>
     </div>
 </p-dialog>
