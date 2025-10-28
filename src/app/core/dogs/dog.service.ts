@@ -22,9 +22,6 @@ export class DogService {
   }); 
   #hasMoreDogs = signal(true);
   hasMoreDogs = this.#hasMoreDogs.asReadonly();
-  #isLoading = signal(false);
-  isLoading = this.#isLoading.asReadonly();
-
 
   initDogs(): Observable<void> {
     return this.getAllDogs();
@@ -68,7 +65,6 @@ export class DogService {
   }
 
   getAllDogs(): Observable<void> {
-    this.#isLoading.set(true);
     let url = `${environment.apiUrl}/dog/all?take=${this.#pagination().take}`;
     if (this.#pagination().skip > 0) {
       url = `${environment.apiUrl}/dog/all?skip=${this.#pagination().skip}&take=${this.#pagination().take}`;
@@ -83,8 +79,7 @@ export class DogService {
           this.#hasMoreDogs.set(false);
         }
         return;
-      }),
-      tap(() => this.#isLoading.set(false))
+      })
     );
   }
 

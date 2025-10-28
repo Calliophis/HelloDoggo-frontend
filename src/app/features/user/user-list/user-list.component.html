@@ -9,6 +9,7 @@
             <th>LastName</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Delete user</th>
         </tr>
         
     </ng-template>
@@ -21,7 +22,14 @@
             <td>
                 <p-select appendTo="body" [options]="roles()" [disabled]="checkIfOwnRole(user.id)" [ngModel]="user.role" (onChange)="changeRole(user.id, $event.value)"></p-select>
             </td>
+            <td><p-button type="button" icon="pi pi-trash" rounded severity="danger" variant="text" (click)="showDialog(user.id)" [disabled]="checkIfOwnRole(user.id)"></p-button></td>
         </tr>
     </ng-template>
 </p-table>
+@if (errorMessage()) {
+    <p-message severity="error">{{ errorMessage() }}</p-message>
+}
+@if (successMessage()) {
+    <p-message severity="success">{{ successMessage() }}</p-message>
+}
 

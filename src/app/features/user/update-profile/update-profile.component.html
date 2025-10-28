@@ -73,13 +73,6 @@
             </div>
             <div>
                 <p-button type="button" severity="danger" (click)="showDialog()">Delete my account</p-button>
-                <p-dialog header="Are you sure?" [modal]="true" [(visible)]="isVisible" [style]="{ width: '20rem' }">
-                    <p class="text-center">This will permanently delete your account.</p>
-                    <div class="flex justify-center gap-3 mt-5">
-                        <p-button type="button" severity="secondary" (click)="cancelDelete()">Cancel</p-button>
-                        <p-button type="button" severity="danger" (onClick)="deleteProfile()" [loading]="isLoading()">Delete</p-button>
-                    </div>
-                </p-dialog>
             </div>
         </div>
         

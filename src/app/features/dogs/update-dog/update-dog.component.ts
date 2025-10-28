@@ -16,6 +16,8 @@ import { DialogModule } from 'primeng/dialog';
 import { UpdateDogForm } from './update-dog-form.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../../environments/environment';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DeleteDialogComponent } from '../../user/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-update-dog',
@@ -32,12 +34,16 @@ import { environment } from '../../../../environments/environment';
     FormsModule,
     CardModule
   ],
+  providers: [DialogService],
   templateUrl: './update-dog.component.html'
 })
 export class UpdateDogComponent implements OnInit {
+  ref: DynamicDialogRef | undefined;
+
   private errorMessageService = inject(ErrorMessageService);
   private dogService = inject(DogService);
   private destroyRef = inject(DestroyRef);
+  public dialogService = inject(DialogService);
   
   dog = input.required<Dog>();
   submitEvent = output<void>();
@@ -49,7 +55,6 @@ export class UpdateDogComponent implements OnInit {
   successMessage = signal<string |null>(null);
   
   isVisibleUpdateImageDialog = model<boolean>(false);
-  isVisibleDeleteDialog = model<boolean>(false);
 
   updateDogForm = new FormGroup<UpdateDogForm>({
     name: new FormControl('', { validators: [Validators.minLength(2), WhiteSpaceValidator()], nonNullable: true }),
@@ -83,16 +88,22 @@ export class UpdateDogComponent implements OnInit {
     });
   }
 
-  cancelDelete() {
-    this.isVisibleDeleteDialog.set(false);
-  }
-
   showUpdateImageDialog() {
     this.isVisibleUpdateImageDialog.set(true);
   }
 
   showDeleteDialog() {
-    this.isVisibleDeleteDialog.set(true);
+    this.ref = this.dialogService.open(DeleteDialogComponent, {
+      header: 'Are you sure?',
+      width: '20rem',
+      modal: true, 
+    });
+
+    this.ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
+      if (confirmed) {
+        this.deleteDog();
+      }
+    })
   }
 
   updateImage() {
