@@ -44,7 +44,7 @@ export class DogGalleryComponent {
   }
 
   loadMoreDogs() {
-    if (this.dogService.hasMoreDogs()) {
+    if (this.dogService.dogs().length > 0 && this.dogService.hasMoreDogs()) {
       this.dogService.loadMoreDogs().subscribe();
     }
   }

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { Dog } from './dog.model';
 import { FormGroup } from '@angular/forms';
 import { CreateDogForm } from '../../features/dogs/create-dog/create-dog-form.model';
@@ -87,27 +87,27 @@ export class DogService {
     return this.#http.get<Dog>(`${environment.apiUrl}/dog/${id}`);
   }
 
-  createDog(newDog: FormData): Observable<object> {
+  createDog(newDog: FormData): Observable<void> {
     return this.#http.post(`${environment.apiUrl}/dog/create`, newDog).pipe(
-      tap(() => this.refreshDogs())
+      switchMap(() => this.refreshDogs())
     );
   }
 
-  updateDogInfo(dog: Partial<Dog>, id: string): Observable<object> {
+  updateDogInfo(dog: Partial<Dog>, id: string): Observable<void> {
     return this.#http.patch(`${environment.apiUrl}/dog/${id}`, dog).pipe(
-      tap(() => this.refreshDogs())
+      switchMap(() => this.refreshDogs())
     );
   }
 
-  updateDogImage(formData: FormData, id: string): Observable<object> {
+  updateDogImage(formData: FormData, id: string): Observable<void> {
     return this.#http.patch(`${environment.apiUrl}/dog/${id}`, formData).pipe(
-      tap(() => this.refreshDogs())
+      switchMap(() => this.refreshDogs())
     );
   }
 
-  deleteDog(id: string): Observable<object> {
+  deleteDog(id: string): Observable<void> {
     return this.#http.delete(`${environment.apiUrl}/dog/${id}`).pipe(
-      tap(() => this.refreshDogs())
+      switchMap(() => this.refreshDogs())
     );
   }
 }

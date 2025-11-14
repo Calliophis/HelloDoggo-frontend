@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, model, OnInit, output, signal } from '@angular/core';
+import { Component, DestroyRef, inject, model, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -16,7 +16,7 @@ import { DialogModule } from 'primeng/dialog';
 import { UpdateDogForm } from './update-dog-form.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../../environments/environment';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DeleteDialogComponent } from '../../user/components/delete-dialog/delete-dialog.component';
 
 @Component({
@@ -38,17 +38,16 @@ import { DeleteDialogComponent } from '../../user/components/delete-dialog/delet
   templateUrl: './update-dog.component.html'
 })
 export class UpdateDogComponent implements OnInit {
-  ref: DynamicDialogRef | undefined;
+  deleteRef: DynamicDialogRef | undefined;
+  public config = inject(DynamicDialogConfig);
+  public updateRef = inject(DynamicDialogRef);
 
   private errorMessageService = inject(ErrorMessageService);
   private dogService = inject(DogService);
   private destroyRef = inject(DestroyRef);
   public dialogService = inject(DialogService);
-  
-  dog = input.required<Dog>();
-  submitEvent = output<void>();
-  cancelEvent = output<void>();
 
+  dog = signal<Dog>(this.config.data.dog);
   hasBeenSubmitted = signal<boolean>(false);
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
@@ -78,35 +77,36 @@ export class UpdateDogComponent implements OnInit {
     return this.errorMessageService.getErrorText(control);
   }
 
-  cancelUpdate() {
-    this.cancelEvent.emit();
+  cancelUpdate(): void {
     this.updateDogForm.patchValue({
       name: this.dog().name,
       sex: this.dog().sex,
       breed: this.dog().breed,
       description: this.dog().description
     });
+
+    this.updateRef.close();
   }
 
-  showUpdateImageDialog() {
+  showUpdateImageDialog(): void {
     this.isVisibleUpdateImageDialog.set(true);
   }
 
-  showDeleteDialog() {
-    this.ref = this.dialogService.open(DeleteDialogComponent, {
+  showDeleteDialog(): void {
+    this.deleteRef = this.dialogService.open(DeleteDialogComponent, {
       header: 'Are you sure?',
       width: '20rem',
       modal: true, 
     });
 
-    this.ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
+    this.deleteRef.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.deleteDog();
       }
     })
   }
 
-  updateImage() {
+  updateImage(): void {
     if (!this.imageInput.value) {
       throw new Error('No image selected');
     }
@@ -114,7 +114,7 @@ export class UpdateDogComponent implements OnInit {
     const formData = this.dogService.generateUpdateDogImageFormData(this.imageInput.value); 
 
     this.isLoading.set(true);
-    return this.dogService.updateDogImage(formData, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.dogService.updateDogImage(formData, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.isVisibleUpdateImageDialog.set(false);
@@ -126,7 +126,7 @@ export class UpdateDogComponent implements OnInit {
     });
   }
   
-  onSubmit() { 
+  onSubmit(): void { 
     this.hasBeenSubmitted.set(true);
 
     if (this.updateDogForm.invalid) {
@@ -140,12 +140,12 @@ export class UpdateDogComponent implements OnInit {
     if(!this.dog()) throw new Error('Dog not defined');
     
     this.isLoading.set(true);
-    return this.dogService.updateDogInfo(this.updateDogForm.value, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.dogService.updateDogInfo(this.updateDogForm.value, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.updateDogForm.enable();
         this.successMessage.set('Dog updated');
-        this.submitEvent.emit();
+        this.updateRef.close();
       },
       error: () => {
         this.isLoading.set(false);
@@ -159,9 +159,11 @@ export class UpdateDogComponent implements OnInit {
     });
   }
   
-  deleteDog() {
+  deleteDog(): void {
     this.isLoading.set(true);
-    return this.dogService.deleteDog(this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.dogService.deleteDog(this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.updateRef.close()
+    });
   }
 
   getImageUrl(path: string): string {
