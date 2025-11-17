@@ -30,8 +30,8 @@
         />
 
         @if (previewUrl()) {
-            <div class="object-cover object-center flex justify-center items-center z-1 mt-2 rounded-md w-40 h-25 overflow-hidden">
-                <img [src]="previewUrl()" alt="Preview">
+            <div class="flex justify-center items-center z-1 mt-2 overflow-hidden">
+                <img [src]="previewUrl()" alt="Preview" class="rounded-md w-40 h-25 object-cover">
             </div>
         } 
     </div>

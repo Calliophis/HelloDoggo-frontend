@@ -33,7 +33,7 @@ export class DogCardComponent {
         dog
       }, 
       header: 'Update your dog information',
-      width: '40vw',
+      width: '30rem',
       modal: true,
     });
   }
