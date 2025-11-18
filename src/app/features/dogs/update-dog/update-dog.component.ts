@@ -52,6 +52,7 @@ export class UpdateDogComponent implements OnInit {
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string |null>(null);
+  imageErrorMessage = signal<string | null>(null);
   
   isVisibleUpdateImageDialog = model<boolean>(false);
 
@@ -60,9 +61,11 @@ export class UpdateDogComponent implements OnInit {
     sex: new FormControl('male', { nonNullable: true }),
     breed: new FormControl('', { validators: [Validators.minLength(2), WhiteSpaceValidator()], nonNullable: true }),
     description: new FormControl('', { validators: [Validators.minLength(2), WhiteSpaceValidator()], nonNullable: true }),
+    image: new FormControl<File | null>(null),
   })
 
   imageInput = new FormControl<File | null>(null);
+  previewUrl = signal<string | null>(null);
 
   ngOnInit(): void {
     this.updateDogForm.patchValue({
@@ -82,7 +85,8 @@ export class UpdateDogComponent implements OnInit {
       name: this.dog().name,
       sex: this.dog().sex,
       breed: this.dog().breed,
-      description: this.dog().description
+      description: this.dog().description,
+      image: null,
     });
 
     this.updateRef.close();
@@ -108,22 +112,20 @@ export class UpdateDogComponent implements OnInit {
 
   updateImage(): void {
     if (!this.imageInput.value) {
-      throw new Error('No image selected');
+      this.imageErrorMessage.set('No image selected');
+    } else {
+      this.updateDogForm.controls.image.setValue(this.imageInput.value);
+      this.generatePreview(this.imageInput.value);
+      this.isVisibleUpdateImageDialog.set(false);
     }
+  }
 
-    const formData = this.dogService.generateUpdateDogImageFormData(this.imageInput.value); 
-
-    this.isLoading.set(true);
-    this.dogService.updateDogImage(formData, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.isVisibleUpdateImageDialog.set(false);
-      },
-      error: (error) => {
-        this.isLoading.set(false);
-        throw new Error('update image error: ' + error.message)
-      }
-    });
+  generatePreview(file: File): void {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.previewUrl.set(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   }
   
   onSubmit(): void { 
@@ -140,7 +142,8 @@ export class UpdateDogComponent implements OnInit {
     if(!this.dog()) throw new Error('Dog not defined');
     
     this.isLoading.set(true);
-    this.dogService.updateDogInfo(this.updateDogForm.value, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    const formData = this.dogService.generateUpdateDogFormData(this.updateDogForm);
+    this.dogService.updateDog(formData, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.updateDogForm.enable();

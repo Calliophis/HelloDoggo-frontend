@@ -69,11 +69,21 @@
             <button type="button" (click)="showUpdateImageDialog()" class="justify-center items-center z-2 mt-2 rounded-md w-40 h-25 overflow-hidden absolute bg-amber-500/50 hidden group-hover:flex">
                 <i class="pi pi-pencil text-white" style="font-size: x-large;"></i>
             </button>
+            
             <div class="flex justify-center items-center z-1 mt-2 overflow-hidden">
-                <img 
-                [src]="dog().imgUrl" 
-                alt="Preview"
-                class="rounded-md w-40 h-25 object-cover">
+                @if (previewUrl()) {
+                    <img 
+                        [src]="previewUrl()" 
+                        alt="Preview" 
+                        class="rounded-md w-40 h-25 object-cover"
+                    >
+                } @else {
+                    <img 
+                        [src]="dog().imgUrl" 
+                        alt="Preview"
+                        class="rounded-md w-40 h-25 object-cover"
+                    >
+                } 
             </div> 
         </div>
     </div>
@@ -98,6 +108,11 @@
 
 <p-dialog header="Update your image" [modal]="true" [(visible)]="isVisibleUpdateImageDialog">
     <app-image-input [formControl]="imageInput" />
+    @if (imageErrorMessage()) {
+        <div class="w-full flex justify-end">
+            <p-message severity="error" variant="simple" size="small">{{ imageErrorMessage() }}</p-message>
+        </div>
+    }
     <div class="flex justify-center w-75 mt-5">
         <p-button type="button" severity="success" [loading]="isLoading()" (onClick)="updateImage()">Update image</p-button>
     </div>

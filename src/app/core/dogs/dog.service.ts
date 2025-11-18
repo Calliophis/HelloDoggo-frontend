@@ -6,6 +6,7 @@ import { FormGroup } from '@angular/forms';
 import { CreateDogForm } from '../../features/dogs/create-dog/create-dog-form.model';
 import { PaginationDto } from '../../shared/models/pagination.model';
 import { environment } from '../../../environments/environment';
+import { UpdateDogForm } from '../../features/dogs/update-dog/update-dog-form.model';
 
 @Injectable({
   providedIn: 'root'
@@ -53,9 +54,20 @@ export class DogService {
     return formData;
   }
 
-  generateUpdateDogImageFormData(dogImage: File): FormData {
+  generateUpdateDogFormData(form: FormGroup<UpdateDogForm>): FormData {
+    const sex =  form.controls.sex.value;
+    const image = form.controls.image.value;
+    const controls = form.controls;
     const formData = new FormData();
-    formData.append('image', dogImage);
+
+    formData.append('name', controls.name.value);
+    formData.append('sex', sex);
+    formData.append('breed', controls.breed.value);
+    formData.append('description', controls.description.value);
+    if (image) {
+      formData.append('image', image);
+    }
+
     return formData;
   }
 
@@ -93,13 +105,7 @@ export class DogService {
     );
   }
 
-  updateDogInfo(dog: Partial<Dog>, id: string): Observable<void> {
-    return this.#http.patch(`${environment.apiUrl}/dog/${id}`, dog).pipe(
-      switchMap(() => this.refreshDogs())
-    );
-  }
-
-  updateDogImage(formData: FormData, id: string): Observable<void> {
+  updateDog(formData: FormData, id: string): Observable<void> {
     return this.#http.patch(`${environment.apiUrl}/dog/${id}`, formData).pipe(
       switchMap(() => this.refreshDogs())
     );

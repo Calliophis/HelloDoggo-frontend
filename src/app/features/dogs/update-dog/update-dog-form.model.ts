@@ -5,4 +5,5 @@ export interface UpdateDogForm {
     sex: FormControl<'male'|'female'>;
     breed: FormControl<string>;
     description: FormControl<string>;
+    image: FormControl<File | null>;
 }
