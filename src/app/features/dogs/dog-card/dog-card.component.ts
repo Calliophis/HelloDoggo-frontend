@@ -1,8 +1,8 @@
-import { Component, inject, input, model } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
+import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { UpdateDogComponent } from '../update-dog/update-dog.component';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { Dog } from '../../../core/dogs/dog.model';
@@ -10,26 +10,31 @@ import { Dog } from '../../../core/dogs/dog.model';
 @Component({
   selector: 'app-dog-card',
   imports: [
-    UpdateDogComponent,
+    DynamicDialogModule,
     IconFieldModule,
     ButtonModule,
-    DialogModule,
     CardModule
   ],
-  templateUrl: './dog-card.component.html'
+  templateUrl: './dog-card.component.html',
+  providers: [DialogService]
 })
 export class DogCardComponent {
+  ref: DynamicDialogRef | undefined;
+  
   #authenticationService = inject(AuthenticationService);
+  #dialogService = inject(DialogService);
 
   dog = input.required<Dog>();
   role = this.#authenticationService.role;
-  isVisible = model(false);
 
-  showDialog() {
-    this.isVisible.set(true);
-  }
-
-  closeDialog() {
-    this.isVisible.set(false);
+  showUpdateDialog(dog: Dog) {
+    this.ref = this.#dialogService.open(UpdateDogComponent, {
+      data: { 
+        dog
+      }, 
+      header: 'Update your dog information',
+      width: '30rem',
+      modal: true,
+    });
   }
 }
