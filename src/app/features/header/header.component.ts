@@ -5,7 +5,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { Router, RouterModule } from '@angular/router';
 import { HeaderLinkComponent } from './header-link/header-link.component';
-import { AuthenticationService } from '../../core/authentication/services/authentication.service';
+import { AuthenticationStateService } from '../../core/authentication/services/authentication-state.service';
 
 @Component({
   selector: 'app-header',
@@ -22,11 +22,11 @@ import { AuthenticationService } from '../../core/authentication/services/authen
 export class HeaderComponent {
 
   #router = inject(Router);
-  #authenticationService = inject(AuthenticationService);
+  #authenticationStateService = inject(AuthenticationStateService);
 
-  isAuthenticated = this.#authenticationService.isAuthenticated;
+  isAuthenticated = this.#authenticationStateService.isAuthenticated;
 
-  role = this.#authenticationService.role;
+  role = this.#authenticationStateService.role;
 
   headerLinks = [
     {
@@ -44,7 +44,7 @@ export class HeaderComponent {
   }
 
   onLogout() {
-    this.#authenticationService.logout();
+    this.#authenticationStateService.logout();
   }
 
   goToHomePage() {

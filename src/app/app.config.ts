@@ -6,7 +6,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import { AmberPreset } from './amber-preset';
 import { authenticationInterceptor } from './core/authentication/authentication.interceptor';
-import { AuthenticationService } from './core/authentication/services/authentication.service';
+import { AuthenticationStateService } from './core/authentication/services/authentication-state.service';
 import { catchError, of } from 'rxjs';
 
 export const appConfig: ApplicationConfig = {
@@ -26,8 +26,8 @@ export const appConfig: ApplicationConfig = {
       }
     }),
     provideAppInitializer(() => {
-      const authenticationService = inject(AuthenticationService);
-      return authenticationService.initAuthentication().pipe(
+      const authenticationStateService = inject(AuthenticationStateService);
+      return authenticationStateService.initAuthentication().pipe(
         catchError(() => of({}))
       );
     }),

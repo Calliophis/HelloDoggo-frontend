@@ -3,7 +3,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DogCardComponent } from '../dog-card/dog-card.component';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { AuthenticationStateService } from '../../../core/authentication/services/authentication-state.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IntersectionObserverDirective } from '../../../shared/directives/intersection-observer.directive';
 import { DogStateService } from '../../../core/dogs/dog-state.service';
@@ -20,11 +20,11 @@ import { DogStateService } from '../../../core/dogs/dog-state.service';
 })
 export class DogGalleryComponent {
   #dogStateService = inject(DogStateService);
-  #authenticationService = inject(AuthenticationService);
+  #authenticationStateService = inject(AuthenticationStateService);
   #router = inject(Router);
 
   dogs = this.#dogStateService.dogs;
-  role = this.#authenticationService.role;
+  role = this.#authenticationStateService.role;
 
   isLoading = signal(false);
 

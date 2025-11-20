@@ -4,7 +4,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ButtonModule } from 'primeng/button';
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { UpdateDogComponent } from '../update-dog/update-dog.component';
-import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { AuthenticationStateService } from '../../../core/authentication/services/authentication-state.service';
 import { Dog } from '../../../core/dogs/dog.model';
 
 @Component({
@@ -21,11 +21,11 @@ import { Dog } from '../../../core/dogs/dog.model';
 export class DogCardComponent {
   ref: DynamicDialogRef | undefined;
   
-  #authenticationService = inject(AuthenticationService);
+  #authenticationStateService = inject(AuthenticationStateService);
   #dialogService = inject(DialogService);
 
   dog = input.required<Dog>();
-  role = this.#authenticationService.role;
+  role = this.#authenticationStateService.role;
 
   showUpdateDialog(dog: Dog) {
     this.ref = this.#dialogService.open(UpdateDogComponent, {

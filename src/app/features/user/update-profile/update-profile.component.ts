@@ -8,8 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
-import { UserService } from '../../../core/authentication/services/user.service';
+import { UserStateService } from '../../../core/authentication/services/user-state.service';
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { confirmPasswordValidator } from '../../../shared/validators/confirm-password.validator';
 import { WhiteSpaceValidator } from '../../../shared/validators/white-space.validator';
@@ -18,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpdateProfileForm } from './update-profile-form.model';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DeleteDialogComponent } from '../components/delete-dialog/delete-dialog.component';
+import { AuthenticationStateService } from '../../../core/authentication/services/authentication-state.service';
 
 @Component({
   selector: 'app-update-profile',
@@ -40,13 +40,13 @@ export class UpdateProfileComponent implements OnInit {
   ref: DynamicDialogRef | undefined;
 
   #errorMessageService = inject(ErrorMessageService);
-  #userService = inject(UserService);
-  #authenticationService = inject(AuthenticationService);
+  #userStateService = inject(UserStateService);
+  #authenticationStateService = inject(AuthenticationStateService);
   #router = inject(Router);
   #destroyRef = inject(DestroyRef);
   dialogService = inject(DialogService);
 
-  user = this.#userService.user;
+  user = this.#userStateService.user;
 
   hasBeenSubmitted = signal<boolean>(false);
   isLoading = signal<boolean>(false);
@@ -63,7 +63,7 @@ export class UpdateProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading.set(true);
-    this.#userService.initUser().pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
+    this.#userStateService.initUser().pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.updateProfileForm.patchValue({
@@ -90,10 +90,8 @@ export class UpdateProfileComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
     
-    const updatedUser = this.#userService.filterUpdateForm(this.updateProfileForm);
-    
     this.isLoading.set(true);
-    return this.#userService.updateOwnProfile(updatedUser).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
+    return this.#userStateService.updateOwnProfile(this.updateProfileForm).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.successMessage.set('Information updated');
@@ -130,13 +128,13 @@ export class UpdateProfileComponent implements OnInit {
 
   deleteProfile() {
     this.isLoading.set(true);
-    return this.#userService.deleteOwnAccount().pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
+    return this.#userStateService.deleteOwnAccount().pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.successMessage.set('Account deleted');
         setTimeout(() => {
           this.successMessage.set(null);
-          this.#authenticationService.logout();
+          this.#authenticationStateService.logout();
           this.#router.navigateByUrl('/dog/all');
         }, 1000);
       },

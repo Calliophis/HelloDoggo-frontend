@@ -9,7 +9,7 @@ import { PasswordModule } from 'primeng/password';
 import { MessageModule } from 'primeng/message';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { AuthenticationStateService } from '../../../core/authentication/services/authentication-state.service';
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -35,7 +35,7 @@ interface LoginForm {  email: FormControl<string>;  password: FormControl<string
 })
 export class LoginComponent {
 
-  #authenticationService = inject(AuthenticationService);
+  #authenticationStateService = inject(AuthenticationStateService);
   #errorMessageService = inject(ErrorMessageService);
   #destroyRef = inject(DestroyRef);
   #router = inject(Router);
@@ -72,7 +72,7 @@ export class LoginComponent {
     }
     
     this.isLoading.set(true);
-    return this.#authenticationService.login(loginDto).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
+    return this.#authenticationStateService.login(loginDto).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.successMessage.set('Successfully logged in');
         setTimeout(() => {
