@@ -19,7 +19,7 @@
             @for (dog of dogs(); track dog.id) {
                 <app-dog-card [dog]="dog"></app-dog-card>
             }
-            <div (appInfiniteScroll)="loadMoreDogs()"></div>
+            <div (appIntersectionObserver)="loadMoreDogs()"></div>
         }
     </div> 
 </main>

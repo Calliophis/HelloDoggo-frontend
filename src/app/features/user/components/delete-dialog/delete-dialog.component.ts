@@ -12,7 +12,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
   templateUrl: './delete-dialog.component.html'
 })
 export class DeleteDialogComponent {
-  public ref = inject(DynamicDialogRef);
+  ref = inject(DynamicDialogRef);
 
   cancel() {
     this.ref.close(false);

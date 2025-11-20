@@ -13,6 +13,7 @@ import { AuthenticationService } from '../../../core/authentication/services/aut
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { LoginDto } from '../../../core/authentication/models/login.model';
 
 interface LoginForm {  email: FormControl<string>;  password: FormControl<string>;}
 
@@ -34,9 +35,9 @@ interface LoginForm {  email: FormControl<string>;  password: FormControl<string
 })
 export class LoginComponent {
 
-  private authenticationService = inject(AuthenticationService);
-  private errorMessageService = inject(ErrorMessageService);
-  private destroyRef = inject(DestroyRef);
+  #authenticationService = inject(AuthenticationService);
+  #errorMessageService = inject(ErrorMessageService);
+  #destroyRef = inject(DestroyRef);
   #router = inject(Router);
 
   loginForm = new FormGroup<LoginForm>({
@@ -51,7 +52,7 @@ export class LoginComponent {
   successMessage = signal<string | null>(null);
 
   getErrorText(control: AbstractControl): string | null {
-    return this.errorMessageService.getErrorText(control);
+    return this.#errorMessageService.getErrorText(control);
   } 
 
   onSubmit() {
@@ -65,13 +66,13 @@ export class LoginComponent {
       return;
     }
 
-    const loginDto = {
+    const loginDto: LoginDto = {
       email: this.loginForm.controls.email.value,
       password: this.loginForm.controls.password.value,
     }
     
     this.isLoading.set(true);
-    return this.authenticationService.login(loginDto).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    return this.#authenticationService.login(loginDto).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.successMessage.set('Successfully logged in');
         setTimeout(() => {

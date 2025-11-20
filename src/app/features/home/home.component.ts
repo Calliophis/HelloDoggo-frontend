@@ -1,20 +1,24 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { AnimatedTitleDirective } from '../../shared/directives/animated-title.directive';
+import { IntersectionObserverDirective } from "../../shared/directives/intersection-observer.directive";
 
 @Component({
   selector: 'app-home',
   imports: [
-    AnimatedTitleDirective,
-    ButtonModule
-  ],
+    ButtonModule,
+    IntersectionObserverDirective
+],
   templateUrl: './home.component.html'
 })
 export class HomeComponent {
-  private router = inject(Router);
+  #router = inject(Router);
 
   goToDogs() {
-    this.router.navigateByUrl('/dog/all');
+    this.#router.navigateByUrl('/dog/all');
+  }
+
+  toggleTitleOpacity(element: ElementRef) {
+    element.nativeElement.classList.add('opacity-100');
   }
 }

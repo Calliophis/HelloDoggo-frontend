@@ -32,10 +32,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './create-dog.component.html'
 })
 export class CreateDogComponent {
-  private errorMessageService = inject(ErrorMessageService);
-  private dogService = inject(DogService);
-  private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  #errorMessageService = inject(ErrorMessageService);
+  #dogService = inject(DogService);
+  #router = inject(Router);
+  #destroyRef = inject(DestroyRef);
 
   hasBeenSubmitted = signal(false);
   isLoading = signal(false);  
@@ -51,7 +51,7 @@ export class CreateDogComponent {
   })
 
   getErrorText(control: AbstractControl): string | null {
-    return this.errorMessageService.getErrorText(control);
+    return this.#errorMessageService.getErrorText(control);
   }
 
   onSubmit() {
@@ -66,15 +66,15 @@ export class CreateDogComponent {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    const formData = this.dogService.generateCreateDogFormData(this.createDogForm);
+    const formData = this.#dogService.generateCreateDogFormData(this.createDogForm);
     
     this.isLoading.set(true);
-    return this.dogService.createDog(formData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    return this.#dogService.createDog(formData).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.successMessage.set('Dog created');
         setTimeout(() => {
-          this.router.navigateByUrl('/dog/all');
+          this.#router.navigateByUrl('/dog/all');
         }, 1000);
       },
       error: () => {

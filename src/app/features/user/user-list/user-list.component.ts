@@ -29,12 +29,12 @@ import { DeleteDialogComponent } from '../components/delete-dialog/delete-dialog
 export class UserListComponent {
   ref: DynamicDialogRef | undefined;
 
-  private userService = inject(UserService);
-  private destroyRef = inject(DestroyRef);
-  public dialogService = inject(DialogService);
+  #userService = inject(UserService);
+  #destroyRef = inject(DestroyRef);
+  dialogService = inject(DialogService);
 
-  users = this.userService.users;
-  user = this.userService.user;
+  users = this.#userService.users;
+  user = this.#userService.user;
   roles = signal<Role[]>(['admin', 'editor', 'user']);
 
   isLoading = signal(false);
@@ -44,13 +44,13 @@ export class UserListComponent {
   constructor() {
     this.isLoading.set(true);
     if (this.users().length > 0) {
-      this.userService.refreshUsers().subscribe({
+      this.#userService.refreshUsers().subscribe({
         next: () => {
           this.isLoading.set(false);
         }
       })
     } else {
-      this.userService.initAllUsers().pipe(takeUntilDestroyed()).subscribe({
+      this.#userService.initAllUsers().pipe(takeUntilDestroyed()).subscribe({
         next: () => {
           this.isLoading.set(false);
         }
@@ -59,8 +59,8 @@ export class UserListComponent {
   }
 
   loadMoreUsers() {
-    if (this.userService.hasMoreUsers()) {
-      this.userService.loadMoreUsers().subscribe();
+    if (this.#userService.hasMoreUsers()) {
+      this.#userService.loadMoreUsers().subscribe();
     }
   }
 
@@ -69,7 +69,7 @@ export class UserListComponent {
   }
 
   changeRole(userId: string, role: Role) {
-    this.userService.updateUserById(userId, {role}).subscribe();
+    this.#userService.updateUserById(userId, {role}).subscribe();
   }
 
   showDialog(id: string) {
@@ -79,7 +79,7 @@ export class UserListComponent {
       modal: true, 
     });
 
-    this.ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
+    this.ref.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.deleteUser(id);
       }
@@ -88,7 +88,7 @@ export class UserListComponent {
 
   deleteUser(id: string) {
     this.isLoading.set(true);
-    return this.userService.deleteUser(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    return this.#userService.deleteUser(id).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.successMessage.set('Accound deleted');

@@ -21,12 +21,12 @@ import { AuthenticationService } from '../../core/authentication/services/authen
 })
 export class HeaderComponent {
 
-  private router = inject(Router);
-  private authenticationService = inject(AuthenticationService);
+  #router = inject(Router);
+  #authenticationService = inject(AuthenticationService);
 
-  isAuthenticated = this.authenticationService.isAuthenticated;
+  isAuthenticated = this.#authenticationService.isAuthenticated;
 
-  role = this.authenticationService.role;
+  role = this.#authenticationService.role;
 
   headerLinks = [
     {
@@ -36,18 +36,18 @@ export class HeaderComponent {
   ]
 
   onLogin() {
-    this.router.navigateByUrl('/auth/login')
+    this.#router.navigateByUrl('/auth/login')
   }
 
   onSignup() {
-    this.router.navigateByUrl('auth/signup')
+    this.#router.navigateByUrl('auth/signup')
   }
 
   onLogout() {
-    this.authenticationService.logout();
+    this.#authenticationService.logout();
   }
 
   goToHomePage() {
-    this.router.navigateByUrl('/home');
+    this.#router.navigateByUrl('/home');
   }
 }

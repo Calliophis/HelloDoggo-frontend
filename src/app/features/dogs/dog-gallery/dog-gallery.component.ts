@@ -6,12 +6,12 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { DogService } from '../../../core/dogs/dog.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { InfiniteScrollDirective } from "../../../shared/directives/infinite-scroll.directive";
+import { IntersectionObserverDirective } from '../../../shared/directives/intersection-observer.directive';
 
 @Component({
   selector: 'app-dog-gallery',
   imports: [
-    InfiniteScrollDirective,
+    IntersectionObserverDirective,
     ProgressSpinnerModule,
     DogCardComponent,
     ButtonModule,
@@ -20,19 +20,19 @@ import { InfiniteScrollDirective } from "../../../shared/directives/infinite-scr
 })
 export class DogGalleryComponent {
 
-  private dogService = inject(DogService);
-  private authenticationService = inject(AuthenticationService);
-  private router = inject(Router);
+  #dogService = inject(DogService);
+  #authenticationService = inject(AuthenticationService);
+  #router = inject(Router);
 
-  dogs = this.dogService.dogs;
-  role = this.authenticationService.role;
+  dogs = this.#dogService.dogs;
+  role = this.#authenticationService.role;
 
   isLoading = signal(false);
 
   constructor() {
     if (this.dogs().length > 0) return;
     this.isLoading.set(true);
-    this.dogService.initDogs().pipe(takeUntilDestroyed()).subscribe({
+    this.#dogService.initDogs().pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.isLoading.set(false);
       }
@@ -40,12 +40,12 @@ export class DogGalleryComponent {
   }
 
   createDog() {
-    this.router.navigateByUrl('/dog/create');
+    this.#router.navigateByUrl('/dog/create');
   }
 
   loadMoreDogs() {
-    if (this.dogService.dogs().length > 0 && this.dogService.hasMoreDogs()) {
-      this.dogService.loadMoreDogs().subscribe();
+    if (this.#dogService.dogs().length > 0 && this.#dogService.hasMoreDogs()) {
+      this.#dogService.loadMoreDogs().subscribe();
     }
   }
 }

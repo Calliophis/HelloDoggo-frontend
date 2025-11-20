@@ -22,7 +22,7 @@ export class AuthenticationService {
   role = computed(() => this.#userService.user()?.role);
 
   initAuthentication(): Observable<void> {
-    this.updateToken();
+    this.#updateToken();
     return this.#userService.initUser();
   }
 
@@ -42,7 +42,7 @@ export class AuthenticationService {
     return this.#http.post<{ accessToken: string, role: Role }>(`${environment.apiUrl}/auth/login`, user).pipe(
       switchMap(loginResponse => {
         localStorage.setItem('accessToken', loginResponse.accessToken);
-        this.updateToken();
+        this.#updateToken();
         return this.#userService.initUser();
       }),
     );
@@ -50,11 +50,11 @@ export class AuthenticationService {
 
   logout(): void {
     localStorage.removeItem('accessToken');
-    this.updateToken();
+    this.#updateToken();
     this.#router.navigateByUrl('/auth/login');
   }
 
-  private updateToken(): void {
+  #updateToken(): void {
     this.#token.set(localStorage.getItem('accessToken'));
   }
 }
