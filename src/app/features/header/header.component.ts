@@ -5,7 +5,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { Router, RouterModule } from '@angular/router';
 import { HeaderLinkComponent } from './header-link/header-link.component';
-import { AuthenticationService } from '../../core/authentication/services/authentication.service';
+import { AuthenticationStateService } from '../../core/authentication/services/authentication-state.service';
 
 @Component({
   selector: 'app-header',
@@ -21,12 +21,12 @@ import { AuthenticationService } from '../../core/authentication/services/authen
 })
 export class HeaderComponent {
 
-  private router = inject(Router);
-  private authenticationService = inject(AuthenticationService);
+  #router = inject(Router);
+  #authenticationStateService = inject(AuthenticationStateService);
 
-  isAuthenticated = this.authenticationService.isAuthenticated;
+  isAuthenticated = this.#authenticationStateService.isAuthenticated;
 
-  role = this.authenticationService.role;
+  role = this.#authenticationStateService.role;
 
   headerLinks = [
     {
@@ -36,18 +36,18 @@ export class HeaderComponent {
   ]
 
   onLogin() {
-    this.router.navigateByUrl('/auth/login')
+    this.#router.navigateByUrl('/auth/login')
   }
 
   onSignup() {
-    this.router.navigateByUrl('auth/signup')
+    this.#router.navigateByUrl('auth/signup')
   }
 
   onLogout() {
-    this.authenticationService.logout();
+    this.#authenticationStateService.logout();
   }
 
   goToHomePage() {
-    this.router.navigateByUrl('/home');
+    this.#router.navigateByUrl('/home');
   }
 }

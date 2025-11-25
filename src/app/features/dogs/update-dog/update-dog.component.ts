@@ -8,7 +8,6 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { Dog } from '../../../core/dogs/dog.model';
-import { DogService } from '../../../core/dogs/dog.service';
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { ImageInputComponent } from '../../../shared/components/image-input/image-input.component';
 import { WhiteSpaceValidator } from '../../../shared/validators/white-space.validator';
@@ -18,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../../environments/environment';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DeleteDialogComponent } from '../../user/components/delete-dialog/delete-dialog.component';
+import { DogStateService } from '../../../core/dogs/dog-state.service';
 
 @Component({
   selector: 'app-update-dog',
@@ -39,13 +39,13 @@ import { DeleteDialogComponent } from '../../user/components/delete-dialog/delet
 })
 export class UpdateDogComponent implements OnInit {
   deleteRef: DynamicDialogRef | undefined;
-  public config = inject(DynamicDialogConfig);
-  public updateRef = inject(DynamicDialogRef);
+  config = inject(DynamicDialogConfig);
+  updateRef = inject(DynamicDialogRef);
 
-  private errorMessageService = inject(ErrorMessageService);
-  private dogService = inject(DogService);
-  private destroyRef = inject(DestroyRef);
-  public dialogService = inject(DialogService);
+  #dogStateService = inject(DogStateService);
+  #errorMessageService = inject(ErrorMessageService);
+  #destroyRef = inject(DestroyRef);
+  #dialogService = inject(DialogService);
 
   dog = signal<Dog>(this.config.data.dog);
   hasBeenSubmitted = signal<boolean>(false);
@@ -77,7 +77,7 @@ export class UpdateDogComponent implements OnInit {
   }
 
   getErrorText(control: AbstractControl): string | null {
-    return this.errorMessageService.getErrorText(control);
+    return this.#errorMessageService.getErrorText(control);
   }
 
   cancelUpdate(): void {
@@ -97,13 +97,13 @@ export class UpdateDogComponent implements OnInit {
   }
 
   showDeleteDialog(): void {
-    this.deleteRef = this.dialogService.open(DeleteDialogComponent, {
+    this.deleteRef = this.#dialogService.open(DeleteDialogComponent, {
       header: 'Are you sure?',
       width: '20rem',
       modal: true, 
     });
 
-    this.deleteRef.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
+    this.deleteRef.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.deleteDog();
       }
@@ -142,8 +142,8 @@ export class UpdateDogComponent implements OnInit {
     if(!this.dog()) throw new Error('Dog not defined');
     
     this.isLoading.set(true);
-    const formData = this.dogService.generateUpdateDogFormData(this.updateDogForm);
-    this.dogService.updateDog(formData, this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+   
+    this.#dogStateService.updateDog(this.updateDogForm, this.dog().id).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.updateDogForm.enable();
@@ -164,7 +164,7 @@ export class UpdateDogComponent implements OnInit {
   
   deleteDog(): void {
     this.isLoading.set(true);
-    this.dogService.deleteDog(this.dog().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.#dogStateService.deleteDog(this.dog().id).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => this.updateRef.close()
     });
   }

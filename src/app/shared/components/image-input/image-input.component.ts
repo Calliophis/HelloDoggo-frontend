@@ -59,7 +59,7 @@ export class ImageInputComponent implements ControlValueAccessor {
     const file = input.files?.[0];
 
     if (file) {
-      this.processFile(file);
+      this.#processFile(file);
     }
   }
 
@@ -79,11 +79,11 @@ export class ImageInputComponent implements ControlValueAccessor {
 
     const file = event.dataTransfer?.files?.[0];
     if (file) {
-      this.processFile(file);
+      this.#processFile(file);
     }
   }
   
-  private processFile(file: File): void {
+  #processFile(file: File): void {
     this.selectedFile.set(file);
     this.onChange(file);
     this.onTouched();

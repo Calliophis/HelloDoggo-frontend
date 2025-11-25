@@ -1,17 +1,16 @@
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../models/user.model';
 import { map, Observable, switchMap } from 'rxjs';
 import { UpdateProfileForm } from '../../../features/user/update-profile/update-profile-form.model';
 import { FormGroup } from '@angular/forms';
 import { PaginationDto } from '../../../shared/models/pagination.model';
-import { environment } from '../../../../environments/environment';
+import { UserApiService } from './user-api.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
-  #http = inject(HttpClient);
+export class UserStateService {
+  #userApiService = inject(UserApiService);
 
   #user = signal<User | null>(null);
   user = this.#user.asReadonly();
@@ -51,7 +50,6 @@ export class UserService {
     const filteredForm: Partial<User> = Object.fromEntries(
       Object.entries(formValue).filter(([key, value]) => key !== 'confirmPassword' && value !== null && value !== '')
     );
-
     return filteredForm;
   }
 
@@ -61,12 +59,7 @@ export class UserService {
   }
 
   getAllUsers() {
-    let url = `${environment.apiUrl}/user/all?take=${this.#pagination().take}`;
-    if (this.#pagination().skip > 0) {
-      url = `${environment.apiUrl}/user/all?skip=${this.#pagination().skip}&take=${this.#pagination().take}`;
-    }
-
-    return this.#http.get<{ users: User[], totalUsers: number }>(url).pipe(
+    return this.#userApiService.getAllUsers(this.#pagination()).pipe(
       map(userResponse => {
         this.#users.update(currentUsers => {
           return [...currentUsers, ...userResponse.users]
@@ -80,25 +73,26 @@ export class UserService {
   }
 
   getOwnProfile(): Observable<User> {
-    return this.#http.get<User>(`${environment.apiUrl}/user/me`);
+    return this.#userApiService.getOwnProfile();
   }
 
-  updateOwnProfile(updatedUser: Partial<User>): Observable<object> {
-    return this.#http.patch(`${environment.apiUrl}/user/me`, updatedUser)
+  updateOwnProfile(form: FormGroup<UpdateProfileForm>): Observable<object> {
+    const updatedUser = this.filterUpdateForm(form);
+    return this.#userApiService.updateOwnProfile(updatedUser);
   }
 
   updateUserById(id: string, updatedUser: Partial<User>): Observable<void> {
-    return this.#http.patch(`${environment.apiUrl}/user/${id}`, updatedUser).pipe(
+    return this.#userApiService.updateUserById(id, updatedUser).pipe(
       switchMap(() => this.refreshUsers())
     );
   }
 
   deleteOwnAccount(): Observable<object> {
-    return this.#http.delete(`${environment.apiUrl}/user/me`);
+    return this.#userApiService.deleteOwnAccount();
   }
 
   deleteUser(id: string): Observable<void> {
-    return this.#http.delete(`${environment.apiUrl}/user/${id}`).pipe(
+    return this.#userApiService.deleteUser(id).pipe(
       switchMap(() => this.refreshUsers())
     );
   }

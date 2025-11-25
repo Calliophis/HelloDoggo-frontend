@@ -9,7 +9,7 @@ import { MessageModule } from 'primeng/message';
 import { WhiteSpaceValidator } from '../../../shared/validators/white-space.validator';
 import { confirmPasswordValidator } from '../../../shared/validators/confirm-password.validator';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { AuthenticationStateService } from '../../../core/authentication/services/authentication-state.service';
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { PasswordInputComponent } from '../components/password-input/password-input.component';
 import { SignupForm } from './signup-form.model';
@@ -31,10 +31,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './signup.component.html'
 })
 export class SignupComponent {
-  private errorMessageService = inject(ErrorMessageService)
-  private authenticationService = inject(AuthenticationService);
-  private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  #errorMessageService = inject(ErrorMessageService)
+  #authenticationStateService = inject(AuthenticationStateService);
+  #router = inject(Router);
+  #destroyRef = inject(DestroyRef);
 
   signupForm = new FormGroup<SignupForm>({
     firstName: new FormControl('', { validators: [Validators.required, Validators.minLength(2), WhiteSpaceValidator()], nonNullable: true }),
@@ -51,7 +51,7 @@ export class SignupComponent {
   successMessage = signal<string |null>(null);
   
   getErrorText(control: AbstractControl): string | null {
-   return this.errorMessageService.getErrorText(control);
+   return this.#errorMessageService.getErrorText(control);
   }
 
   onSubmit() {
@@ -74,12 +74,12 @@ export class SignupComponent {
     }
     
     this.isLoading.set(true);
-    return this.authenticationService.signup(filteredForm).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    return this.#authenticationStateService.signup(filteredForm).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.successMessage.set('Account created');
         setTimeout(() => {
           this.isLoading.set(false);
-          this.router.navigateByUrl('/user/me');
+          this.#router.navigateByUrl('/user/me');
         }, 1000);
       },
       error: (error) => {

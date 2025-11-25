@@ -9,11 +9,11 @@ import { MessageModule } from 'primeng/message';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ImageInputComponent } from '../../../shared/components/image-input/image-input.component';
-import { DogService } from '../../../core/dogs/dog.service';
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { WhiteSpaceValidator } from '../../../shared/validators/white-space.validator';
 import { CreateDogForm } from './create-dog-form.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DogStateService } from '../../../core/dogs/dog-state.service';
 
 @Component({
   selector: 'app-create-dog',
@@ -32,10 +32,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './create-dog.component.html'
 })
 export class CreateDogComponent {
-  private errorMessageService = inject(ErrorMessageService);
-  private dogService = inject(DogService);
-  private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  #dogStateService = inject(DogStateService);
+
+  #errorMessageService = inject(ErrorMessageService);
+  #router = inject(Router);
+  #destroyRef = inject(DestroyRef);
 
   hasBeenSubmitted = signal(false);
   isLoading = signal(false);  
@@ -51,7 +52,7 @@ export class CreateDogComponent {
   })
 
   getErrorText(control: AbstractControl): string | null {
-    return this.errorMessageService.getErrorText(control);
+    return this.#errorMessageService.getErrorText(control);
   }
 
   onSubmit() {
@@ -65,16 +66,14 @@ export class CreateDogComponent {
     this.createDogForm.disable();
     this.errorMessage.set(null);
     this.successMessage.set(null);
-
-    const formData = this.dogService.generateCreateDogFormData(this.createDogForm);
-    
     this.isLoading.set(true);
-    return this.dogService.createDog(formData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+
+    return this.#dogStateService.createDog(this.createDogForm).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.successMessage.set('Dog created');
         setTimeout(() => {
-          this.router.navigateByUrl('/dog/all');
+          this.#router.navigateByUrl('/dog/all');
         }, 1000);
       },
       error: () => {
