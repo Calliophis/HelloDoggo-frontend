@@ -1,0 +1,40 @@
+<div class="flex gap-5 justify-center items-center mt-5">
+    <a [href]="dog().imgUrl" target="_blank" class="flex justify-center items-center relative rounded-xl overflow-hidden group w-100 h-80">
+        <div class="flex justify-center items-center z-2 absolute bg-amber-500/50 opacity-0 transition-opacity group-hover:opacity-100 h-full w-full">
+            <i class="pi pi-eye text-white" style="font-size: x-large;"></i>
+        </div>
+        
+        <img [src]="dog().imgUrl" alt="dog image" class="object-center object-cover h-full w-full">
+        
+    </a>
+    
+    <div class="flex flex-col pl-3 h-80 w-100 justify-between overflow-hidden">
+        <p-scrollpanel [style]="{ height: '250px' }">
+            <div>
+                <h1 class="font-bold">Name</h1>
+                <p class="text-xl">{{ dog().name }}</p>
+            </div>
+            
+            <div>
+                <h1 class="font-bold">Breed</h1>
+                <p class="text-xl">{{ dog().breed }}</p>
+            </div>
+            
+            <div>
+                <h1 class="font-bold">Sex</h1>
+                <p class="text-xl">{{ dog().sex }}</p>
+            </div>
+            
+            <div>
+                <h1 class="font-bold">Description</h1>
+                <p class="text-xl">{{ dog().description }}</p>
+            </div>
+        </p-scrollpanel>
+        
+        <p-button type="button" (click)="adoptDog(dog().id)" size="large" label="Adopt" styleClass="w-full">
+            <i class="pi pi-sparkles"></i>
+        </p-button>
+    </div>
+</div>
+
+

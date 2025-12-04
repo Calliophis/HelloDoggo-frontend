@@ -1,13 +1,14 @@
-<p-card class="flex justify-center m-5 w-[400px] h-[400px] relative">
+<p-card class="flex justify-center m-5 w-[400px] h-[400px] relative hover:cursor-pointer" (click)="showDogModal(dog())">
     
     <ng-template #header>
         <img 
             alt="dog image" 
             class="h-[250px] w-[400px] rounded-t-xl object-cover" 
-            [src]="dog().imgUrl">
+            [src]="dog().imgUrl"
+            >
         @if (role() === 'admin' || role() === 'editor') {
             <div class="flex justify-center items-center absolute top-3 right-3 bg-white rounded-4xl w-7 h-7">
-                <button type="button" (click)="showUpdateDialog(dog())">
+                <button type="button" (click)="showUpdateDialog(dog(), $event)">
                     <i class="pi pi-pencil hover:text-amber-600 hover:cursor-pointer"></i>
                 </button>
             </div> 
@@ -29,5 +30,5 @@
         }
     </ng-template>
     
-    <p class="w-full">{{ dog().description }}</p>
+    <p class="w-full line-clamp-2">{{ dog().description }}</p>
 </p-card>
