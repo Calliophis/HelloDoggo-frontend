@@ -19,7 +19,7 @@ import { Dog } from '../../../core/dogs/dog.model';
   providers: [DialogService]
 })
 export class DogCardComponent {
-  ref: DynamicDialogRef | undefined;
+  ref: DynamicDialogRef | null = null;
   
   #authenticationStateService = inject(AuthenticationStateService);
   #dialogService = inject(DialogService);

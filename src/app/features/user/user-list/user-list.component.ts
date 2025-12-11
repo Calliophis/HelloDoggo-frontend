@@ -27,7 +27,7 @@ import { DeleteDialogComponent } from '../components/delete-dialog/delete-dialog
   templateUrl: './user-list.component.html'
 })
 export class UserListComponent {
-  ref: DynamicDialogRef | undefined;
+  ref: DynamicDialogRef | null = null;
 
   #userStateService = inject(UserStateService);
   #destroyRef = inject(DestroyRef);
@@ -79,7 +79,7 @@ export class UserListComponent {
       modal: true, 
     });
 
-    this.ref.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
+    this.ref?.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.deleteUser(id);
       }
