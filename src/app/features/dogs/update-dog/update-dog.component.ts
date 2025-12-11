@@ -38,7 +38,7 @@ import { DogStateService } from '../../../core/dogs/dog-state.service';
   templateUrl: './update-dog.component.html'
 })
 export class UpdateDogComponent implements OnInit {
-  deleteRef: DynamicDialogRef | undefined;
+  deleteRef: DynamicDialogRef | null = null;
   config = inject(DynamicDialogConfig);
   updateRef = inject(DynamicDialogRef);
 
@@ -103,7 +103,7 @@ export class UpdateDogComponent implements OnInit {
       modal: true, 
     });
 
-    this.deleteRef.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
+    this.deleteRef?.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.deleteDog();
       }

@@ -37,7 +37,7 @@ import { AuthenticationStateService } from '../../../core/authentication/service
   templateUrl: './update-profile.component.html'
 })
 export class UpdateProfileComponent implements OnInit {
-  ref: DynamicDialogRef | undefined;
+  ref: DynamicDialogRef | null = null;
 
   #errorMessageService = inject(ErrorMessageService);
   #userStateService = inject(UserStateService);
@@ -119,7 +119,7 @@ export class UpdateProfileComponent implements OnInit {
       modal: true, 
     });
 
-    this.ref.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
+    this.ref?.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.deleteProfile()
       }
