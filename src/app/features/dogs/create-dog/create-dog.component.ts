@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { MessageModule } from 'primeng/message';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { ImageInputComponent } from '../../../shared/components/image-input/image-input.component';
 import { ErrorMessageService } from '../../../core/error-message.service';
 import { WhiteSpaceValidator } from '../../../shared/validators/white-space.validator';
@@ -24,11 +24,10 @@ import { DogStateService } from '../../../core/dogs/dog-state.service';
     FloatLabelModule,
     InputTextModule,
     MessageModule,
-    CommonModule,
     ButtonModule,
     FormsModule,
     CardModule
-  ],
+],
   templateUrl: './create-dog.component.html'
 })
 export class CreateDogComponent {
