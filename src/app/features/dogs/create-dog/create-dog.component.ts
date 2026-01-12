@@ -28,7 +28,10 @@ import { DogStateService } from '../../../core/dogs/dog-state.service';
     FormsModule,
     CardModule
 ],
-  templateUrl: './create-dog.component.html'
+  templateUrl: './create-dog.component.html',
+  host: {
+    class: 'flex justify-center mt-5',
+  }
 })
 export class CreateDogComponent {
   #dogStateService = inject(DogStateService);
