@@ -34,7 +34,10 @@ import { AuthenticationStateService } from '../../../core/authentication/service
     CardModule
   ],
   providers: [DialogService],
-  templateUrl: './update-profile.component.html'
+  templateUrl: './update-profile.component.html',
+  host: {
+    class: 'flex justify-center mt-5',
+  }
 })
 export class UpdateProfileComponent implements OnInit {
   ref: DynamicDialogRef | null = null;

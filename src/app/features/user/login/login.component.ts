@@ -31,7 +31,10 @@ interface LoginForm {  email: FormControl<string>;  password: FormControl<string
     ButtonModule,
     CardModule
   ],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  host: {
+    class: 'flex justify-center mt-5',
+  }
 })
 export class LoginComponent {
 

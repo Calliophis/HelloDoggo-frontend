@@ -28,7 +28,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     FormsModule,
     CardModule, 
   ],
-  templateUrl: './signup.component.html'
+  templateUrl: './signup.component.html',
+  host: {
+    class: 'flex justify-center mt-5',
+  }
 })
 export class SignupComponent {
   #errorMessageService = inject(ErrorMessageService)
