@@ -8,6 +8,7 @@ import { AmberPreset } from './amber-preset';
 import { authenticationInterceptor } from './core/authentication/authentication.interceptor';
 import { AuthenticationStateService } from './core/authentication/services/authentication-state.service';
 import { catchError, of } from 'rxjs';
+import { DialogService } from 'primeng/dynamicdialog';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,5 +32,6 @@ export const appConfig: ApplicationConfig = {
         catchError(() => of({}))
       );
     }),
+    DialogService,
   ]
 };

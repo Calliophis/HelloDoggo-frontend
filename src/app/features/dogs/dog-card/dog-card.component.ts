@@ -16,8 +16,7 @@ import { DogModalComponent } from '../dog-modal/dog-modal.component';
     ButtonModule,
     CardModule
   ],
-  templateUrl: './dog-card.component.html',
-  providers: [DialogService]
+  templateUrl: './dog-card.component.html'
 })
 export class DogCardComponent {
   ref: DynamicDialogRef | null = null;

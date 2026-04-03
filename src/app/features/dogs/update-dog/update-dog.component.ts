@@ -32,8 +32,7 @@ import { DogStateService } from '../../../core/dogs/dog-state.service';
     ButtonModule,
     FormsModule,
     CardModule
-],
-  providers: [DialogService],
+  ],
   templateUrl: './update-dog.component.html'
 })
 export class UpdateDogComponent implements OnInit {
