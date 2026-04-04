@@ -1,34 +1,35 @@
 <p-card class="flex justify-center m-5 w-[400px] h-[400px] relative hover:cursor-pointer" (click)="showDogModal(dog())">
-    
+
     <ng-template #header>
-        <img 
-            alt="dog image" 
-            class="h-[250px] w-[400px] rounded-t-xl object-cover" 
-            [src]="dog().imgUrl"
-            >
+        <img alt="dog image" class="h-[250px] w-[400px] rounded-t-xl object-cover" [src]="dog().imgUrl">
         @if (role() === 'admin' || role() === 'editor') {
-            <div class="flex justify-center items-center absolute top-3 right-3 bg-white rounded-4xl w-7 h-7">
-                <button type="button" (click)="showUpdateDialog(dog(), $event)">
-                    <i class="pi pi-pencil hover:text-amber-600 hover:cursor-pointer"></i>
-                </button>
-            </div> 
+        <div class="flex justify-center items-center absolute top-3 right-12 bg-white rounded-4xl w-7 h-7">
+            <button type="button" (click)="showDeleteDialog(dog(), $event)">
+                <i class="pi pi-trash hover:text-red-600 hover:cursor-pointer"></i>
+            </button>
+        </div>
+        <div class="flex justify-center items-center absolute top-3 right-3 bg-white rounded-4xl w-7 h-7">
+            <button type="button" (click)="showUpdateDialog(dog(), $event)">
+                <i class="pi pi-pencil hover:text-amber-600 hover:cursor-pointer"></i>
+            </button>
+        </div>
         }
-        
+
     </ng-template>
-    
+
     <ng-template #title>{{ dog().name }}</ng-template>
-    
+
     <ng-template #subtitle>
         <span>
             {{ dog().breed }}
         </span>
         @if (dog().sex === 'male') {
-             <i class="pi pi-mars"></i>
+        <i class="pi pi-mars"></i>
         }
         @if (dog().sex === 'female') {
-            <i class="pi pi-venus"></i>
+        <i class="pi pi-venus"></i>
         }
     </ng-template>
-    
+
     <p class="w-full line-clamp-2">{{ dog().description }}</p>
 </p-card>

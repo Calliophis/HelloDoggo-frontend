@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Dog } from '../../../core/dogs/dog.model';
-import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
@@ -16,8 +16,13 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
 })
 export class DogModalComponent {
   config = inject(DynamicDialogConfig);
+  ref = inject(DynamicDialogRef);
 
   dog = signal<Dog>(this.config.data.dog);
+
+  close(): void {
+    this.ref.close();
+  }
 
   adoptDog(id: string): void {
     console.log(`Adopting dog with id ${id}`);
