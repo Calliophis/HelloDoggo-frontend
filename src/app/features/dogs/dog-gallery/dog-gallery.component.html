@@ -11,7 +11,9 @@
         </h1>
 
         @if (role() === 'editor' || role() === 'admin') {
-        <p-button type="button" label="Add new dog" (click)="createDog()" [loading]="isLoading()"></p-button>
+        <p-button type="button" label="Add new dog" (click)="showCreateDogDialog()" [loading]="isLoading()">
+            <i class="pi pi-plus" pButtonIcon></i>
+        </p-button>
         }
 
     </div>

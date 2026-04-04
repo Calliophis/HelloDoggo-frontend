@@ -78,7 +78,7 @@ export class DogCardComponent {
 
   deleteDog(): void {
     this.isLoading.set(true);
-    this.#dogStateService.deleteDog(this.dog().id).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
+    this.#dogStateService.deleteDog(this.dog().id).subscribe({
       next: () => this.deleteRef()?.close()
     });
   }

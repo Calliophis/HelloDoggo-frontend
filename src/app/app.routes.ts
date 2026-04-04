@@ -1,12 +1,11 @@
 import { Routes } from '@angular/router';
-import { editorGuard } from './core/authentication/guards/editor.guard';
 import { authenticationGuard } from './core/authentication/guards/authentication.guard';
 import { adminGuard } from './core/authentication/guards/admin.guard';
 
 export const routes: Routes = [
-    
+
     {
-        path: 'auth/login', 
+        path: 'auth/login',
         loadComponent: () => import('./features/user/login/login.component').then(c => c.LoginComponent)
     },
     {
@@ -16,11 +15,6 @@ export const routes: Routes = [
     {
         path: 'dog/all',
         loadComponent: () => import('./features/dogs/dog-gallery/dog-gallery.component').then(c => c.DogGalleryComponent)
-    },
-    {
-        path: 'dog/create',
-        loadComponent: () => import('./features/dogs/create-dog/create-dog.component').then(c => c.CreateDogComponent),
-        canActivate: [editorGuard]
     },
     {
         path: 'home',

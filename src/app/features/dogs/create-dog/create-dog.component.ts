@@ -6,7 +6,6 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { MessageModule } from 'primeng/message';
-import { Router } from '@angular/router';
 
 import { ImageInputComponent } from '../../../shared/components/image-input/image-input.component';
 import { ErrorMessageService } from '../../../core/error-message.service';
@@ -14,6 +13,7 @@ import { WhiteSpaceValidator } from '../../../shared/validators/white-space.vali
 import { CreateDogForm } from './create-dog-form.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DogStateService } from '../../../core/dogs/dog-state.service';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-create-dog',
@@ -27,7 +27,7 @@ import { DogStateService } from '../../../core/dogs/dog-state.service';
     ButtonModule,
     FormsModule,
     CardModule
-],
+  ],
   templateUrl: './create-dog.component.html',
   host: {
     class: 'flex justify-center mt-5',
@@ -35,13 +35,13 @@ import { DogStateService } from '../../../core/dogs/dog-state.service';
 })
 export class CreateDogComponent {
   #dogStateService = inject(DogStateService);
-
   #errorMessageService = inject(ErrorMessageService);
-  #router = inject(Router);
   #destroyRef = inject(DestroyRef);
 
+  createRef = inject(DynamicDialogRef);
+
   hasBeenSubmitted = signal(false);
-  isLoading = signal(false);  
+  isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
@@ -75,7 +75,7 @@ export class CreateDogComponent {
         this.isLoading.set(false);
         this.successMessage.set('Dog created');
         setTimeout(() => {
-          this.#router.navigateByUrl('/dog/all');
+          this.createRef.close();
         }, 1000);
       },
       error: () => {
@@ -88,5 +88,5 @@ export class CreateDogComponent {
         }
       }
     });
-  } 
+  }
 }
