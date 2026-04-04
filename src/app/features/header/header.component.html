@@ -1,31 +1,64 @@
-<header class="sticky top-0 z-50 flex items-center gap-2 text-black bg-white py-5 mt-3 font-[Rubik]">
+<header class="sticky top-0 z-50 bg-white py-4 px-6 md:px-10 font-[Rubik] shadow-md w-full border-b border-gray-100">
+    <div class="flex items-center justify-between">
+        <a routerLink="/home" class="shrink-0 flex items-center">
+            <h1 class="text-primary font-semibold text-2xl md:text-3xl">Hello Doggo</h1>
+        </a>
 
-    <a routerLink="/home">
-        <h1 class="text-primary font-semibold text-3xl mx-10">Hello Doggo</h1>
-    </a>
+        <button type="button" class="md:hidden p-2 text-gray-600" (click)="toggleMobileMenu()"
+            aria-label="Toggle navigation">
+            <i class="pi" [class.pi-bars]="!isMobileMenuOpen()" [class.pi-times]="isMobileMenuOpen()"
+                style="font-size: 1.5rem"></i>
+        </button>
 
-    <nav class="w-4/5 flex items-center justify-around gap-12">
+        <nav class="hidden md:flex items-center justify-end gap-8 flex-1">
+            <div class="flex gap-6">
+                @for (headerLink of headerLinks; track $index) {
+                <app-header-link [url]="headerLink.url">{{ headerLink.text }}</app-header-link>
+                }
+            </div>
 
-        <div class="flex gap-6 flex-1">
+            @if (!isAuthenticated()) {
+            <div class="flex gap-3">
+                <p-button routerLink="/auth/signup" size="small">Sign up</p-button>
+                <p-button severity="secondary" routerLink="/auth/login" size="small">Log in</p-button>
+            </div>
+            } @else {
+            <div class="flex items-center gap-6">
+                @if (role() === 'admin') {
+                <app-header-link url="/user/all">Manage users</app-header-link>
+                }
+                <app-header-link url="/user/me">My profile</app-header-link>
+                <p-button severity="secondary" size="small" (click)="onLogout()">Log out</p-button>
+            </div>
+            }
+        </nav>
+    </div>
+
+    @if (isMobileMenuOpen()) {
+    <nav class="md:hidden flex flex-col gap-4 pt-4 mt-4 border-t border-gray-100 pb-2 animate-fadein">
+        <div class="flex flex-col gap-4">
             @for (headerLink of headerLinks; track $index) {
-            <app-header-link [url]="headerLink.url">{{ headerLink.text }}</app-header-link>
+            <app-header-link [url]="headerLink.url" (navigationEvent)="toggleMobileMenu()">{{ headerLink.text
+                }}</app-header-link>
             }
         </div>
 
         @if (!isAuthenticated()) {
-        <div class="flex gap-2">
-            <p-button routerLink="/auth/signup">Sign up</p-button>
-            <p-button severity="secondary" routerLink="/auth/login">Log in</p-button>
+        <div class="flex flex-col gap-3 mt-2">
+            <p-button routerLink="/auth/signup" styleClass="w-full" (click)="toggleMobileMenu()">Sign up</p-button>
+            <p-button severity="secondary" routerLink="/auth/login" styleClass="w-full" (click)="toggleMobileMenu()">Log
+                in</p-button>
         </div>
-        }
-        @else {
-        <div class="flex items-center justify-around gap-12">
+        } @else {
+        <div class="flex flex-col gap-4 mt-2">
             @if (role() === 'admin') {
-            <app-header-link url="/user/all">Manage users</app-header-link>
+            <app-header-link url="/user/all" (navigationEvent)="toggleMobileMenu()">Manage users</app-header-link>
             }
-            <app-header-link url="/user/me">My profile</app-header-link>
-            <p-button severity="secondary" (click)="onLogout()">Log out</p-button>
+            <app-header-link url="/user/me" (navigationEvent)="toggleMobileMenu()">My profile</app-header-link>
+            <p-button severity="secondary" styleClass="w-full" (click)="onLogout(); toggleMobileMenu()">Log
+                out</p-button>
         </div>
         }
     </nav>
+    }
 </header>

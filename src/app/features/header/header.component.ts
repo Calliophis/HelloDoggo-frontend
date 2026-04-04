@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
 import { HeaderLinkComponent } from './header-link/header-link.component';
@@ -21,12 +21,18 @@ export class HeaderComponent {
 
   role = this.#authenticationStateService.role;
 
+  isMobileMenuOpen = signal(false);
+
   headerLinks = [
     {
       text: 'Dogs',
       url: '/dog/all'
     },
   ]
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen.update(value => !value);
+  }
 
   onLogout() {
     this.#authenticationStateService.logout();
