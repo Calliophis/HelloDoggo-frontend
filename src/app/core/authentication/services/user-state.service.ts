@@ -34,6 +34,10 @@ export class UserStateService {
     )
   }
 
+  clearUser(): void {
+    this.#user.set(null);
+  }
+
   initAllUsers(): Observable<void> {
     return this.getAllUsers();
   }

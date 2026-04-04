@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, switchMap, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginDto } from '../models/login.model';
 import { SignupDto } from '../models/signup.model';
@@ -22,7 +22,10 @@ export class AuthenticationStateService {
 
   initAuthentication(): Observable<void> {
     this.#updateToken();
-    return this.#userStateService.initUser();
+    if (this.#token()) {
+      return this.#userStateService.initUser();
+    }
+    return of(undefined);
   }
 
   signup(user: SignupDto): Observable<void> {
@@ -50,6 +53,7 @@ export class AuthenticationStateService {
   logout(): void {
     localStorage.removeItem('accessToken');
     this.#updateToken();
+    this.#userStateService.clearUser();
     this.#router.navigateByUrl('/auth/login');
   }
 
