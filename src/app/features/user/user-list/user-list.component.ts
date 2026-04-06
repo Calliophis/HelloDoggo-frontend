@@ -55,11 +55,11 @@ export class UserListComponent {
           this.isLoading.set(false);
         }
       })
-    } 
+    }
   }
 
   loadMoreUsers() {
-    if (this.#userStateService.hasMoreUsers()) {
+    if (this.#userStateService.hasMore()) {
       this.#userStateService.loadMoreUsers().subscribe();
     }
   }
@@ -69,21 +69,21 @@ export class UserListComponent {
   }
 
   changeRole(userId: string, role: Role) {
-    this.#userStateService.updateUserById(userId, {role}).subscribe();
+    this.#userStateService.updateUserById(userId, { role }).subscribe();
   }
 
   showDialog(id: string) {
     this.ref = this.dialogService.open(DeleteDialogComponent, {
       header: 'Are you sure?',
       width: '20rem',
-      modal: true, 
+      modal: true,
     });
 
     this.ref?.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.deleteUser(id);
       }
-    }) 
+    })
   }
 
   deleteUser(id: string) {

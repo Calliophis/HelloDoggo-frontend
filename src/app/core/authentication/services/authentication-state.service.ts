@@ -10,15 +10,15 @@ import { AuthenticationApiService } from './authentication-api.service';
   providedIn: 'root'
 })
 export class AuthenticationStateService {
-  
+
   #router = inject(Router);
   #userStateService = inject(UserStateService);
   #authenticationApiService = inject(AuthenticationApiService);
 
-  isAuthenticated = computed<boolean>(() => !!this.#token());
+  readonly isAuthenticated = computed<boolean>(() => !!this.#token());
   #token = signal<string | null>(null);
-  token = this.#token.asReadonly();
-  role = computed(() => this.#userStateService.user()?.role);
+  readonly token = this.#token.asReadonly();
+  readonly role = computed(() => this.#userStateService.user()?.role);
 
   initAuthentication(): Observable<void> {
     this.#updateToken();
