@@ -31,6 +31,16 @@ export const routes: Routes = [
         canActivate: [adminGuard]
     },
     {
+        path: 'adoption/me',
+        loadComponent: () => import('./features/adoptions/user-adoptions/user-adoptions.component').then(c => c.UserAdoptionsComponent),
+        canActivate: [authenticationGuard]
+    },
+    {
+        path: 'adoption/all',
+        loadComponent: () => import('./features/adoptions/admin-adoptions/admin-adoptions.component').then(c => c.AdminAdoptionsComponent),
+        canActivate: [adminGuard]
+    },
+    {
         path: '**',
         redirectTo: 'home'
     }

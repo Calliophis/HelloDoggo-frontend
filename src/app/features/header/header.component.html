@@ -17,18 +17,22 @@
                 }
             </div>
 
-            @if (!isAuthenticated()) {
-            <div class="flex gap-3">
-                <p-button routerLink="/auth/signup" size="small">Sign up</p-button>
-                <p-button severity="secondary" routerLink="/auth/login" size="small">Log in</p-button>
-            </div>
-            } @else {
+            @if (isAuthenticated()) {
             <div class="flex items-center gap-6">
+                @if (role() === 'admin' || role() === 'editor') {
+                <app-header-link url="/adoption/all">Manage adoptions</app-header-link>
+                }
                 @if (role() === 'admin') {
                 <app-header-link url="/user/all">Manage users</app-header-link>
                 }
+                <app-header-link url="/adoption/me">My applications</app-header-link>
                 <app-header-link url="/user/me">My profile</app-header-link>
                 <p-button severity="secondary" size="small" (click)="onLogout()">Log out</p-button>
+            </div>
+            } @else {
+            <div class="flex gap-3">
+                <p-button routerLink="/auth/signup" size="small">Sign up</p-button>
+                <p-button severity="secondary" routerLink="/auth/login" size="small">Log in</p-button>
             </div>
             }
         </nav>
@@ -43,20 +47,25 @@
             }
         </div>
 
-        @if (!isAuthenticated()) {
+        @if (isAuthenticated()) {
+        <div class="flex flex-col gap-4 mt-2">
+            @if (role() === 'admin' || role() === 'editor') {
+            <app-header-link url="/adoption/all" (navigationEvent)="toggleMobileMenu()">Manage
+                adoptions</app-header-link>
+            }
+            @if (role() === 'admin') {
+            <app-header-link url="/user/all" (navigationEvent)="toggleMobileMenu()">Manage users</app-header-link>
+            }
+            <app-header-link url="/adoption/me" (navigationEvent)="toggleMobileMenu()">My applications</app-header-link>
+            <app-header-link url="/user/me" (navigationEvent)="toggleMobileMenu()">My profile</app-header-link>
+            <p-button severity="secondary" styleClass="w-full" (click)="onLogout(); toggleMobileMenu()">Log
+                out</p-button>
+        </div>
+        } @else {
         <div class="flex flex-col gap-3 mt-2">
             <p-button routerLink="/auth/signup" styleClass="w-full" (click)="toggleMobileMenu()">Sign up</p-button>
             <p-button severity="secondary" routerLink="/auth/login" styleClass="w-full" (click)="toggleMobileMenu()">Log
                 in</p-button>
-        </div>
-        } @else {
-        <div class="flex flex-col gap-4 mt-2">
-            @if (role() === 'admin') {
-            <app-header-link url="/user/all" (navigationEvent)="toggleMobileMenu()">Manage users</app-header-link>
-            }
-            <app-header-link url="/user/me" (navigationEvent)="toggleMobileMenu()">My profile</app-header-link>
-            <p-button severity="secondary" styleClass="w-full" (click)="onLogout(); toggleMobileMenu()">Log
-                out</p-button>
         </div>
         }
     </nav>

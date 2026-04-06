@@ -54,7 +54,7 @@ export class AdoptApplicationApiService {
   }
 
   updateAdoptApplication(id: string, updateDto: UpdateAdoptApplicationStatusDto): Observable<AdoptApplication> {
-    return this.#http.patch<AdoptApplication>(`${environment.apiUrl}/adoption-application/${id}`, updateDto);
+    return this.#http.patch<AdoptApplication>(`${environment.apiUrl}/adoption-application/${id}/status`, updateDto);
   }
 
   deleteAdoptApplication(id: string): Observable<boolean> {

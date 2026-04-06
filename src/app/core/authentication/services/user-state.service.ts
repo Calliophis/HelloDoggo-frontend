@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../models/user.model';
-import { map, Observable, switchMap } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
 import { UpdateProfileForm } from '../../../features/user/update-profile/update-profile-form.model';
 import { FormGroup } from '@angular/forms';
 import { PaginationDto } from '../../../shared/models/pagination.model';
@@ -39,6 +39,9 @@ export class UserStateService {
   }
 
   initAllUsers(): Observable<void> {
+    if (this.#users().length > 0) {
+      return of(undefined);
+    }
     return this.getAllUsers();
   }
 

@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { Dog } from "./dog.model";
-import { map, Observable, switchMap } from "rxjs";
+import { map, Observable, of, switchMap } from "rxjs";
 import { DogApiService } from "./dog-api.service";
 import { PaginationDto } from "../../shared/models/pagination.model";
 import { FormGroup } from "@angular/forms";
@@ -25,6 +25,9 @@ export class DogStateService {
     readonly hasMore = this.#hasMore.asReadonly();
 
     initDogs(): Observable<void> {
+        if (this.#dogs().length > 0) {
+            return of(undefined);
+        }
         return this.getAllDogs();
     }
 

@@ -1,0 +1,45 @@
+<div class="p-6 md:p-10">
+    <div class="flex items-center gap-4 mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Manage adoption applications</h1>
+    </div>
+
+    <div class="rounded-xl shadow-sm border border-slate-200 mx-auto w-full xl:w-4/5">
+        <p-table [value]="applications()" [rowHover]="true" styleClass="p-datatable-sm">
+            <ng-template #header>
+                <tr>
+                    <th class="uppercase text-xs">Dog</th>
+                    <th class="uppercase text-xs">User</th>
+                    <th class="uppercase text-xs">Status</th>
+                    <th class="uppercase text-xs">Actions</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-application>
+                <tr>
+                    <td>
+                        <span>{{ getDogName(application.dogId) }}</span>
+                    </td>
+                    <td>
+                        <span>{{ getUserName(application.userId) }}</span>
+                    </td>
+                    <td>
+                        <p-select [options]="getFilteredStatusOptions(application)" [(ngModel)]="application.status"
+                            (onChange)="updateStatus(application.id, $event.value)" styleClass="w-40 md:w-50"
+                            optionDisabled="disabled" appendTo="body">
+                            <ng-template #selectedItem let-selectedOption>
+                                <p-tag [value]="selectedOption.label.toUpperCase()"
+                                    [severity]="getSeverity(selectedOption.value)" />
+                            </ng-template>
+                            <ng-template #item let-option>
+                                <p-tag [value]="option.label.toUpperCase()" [severity]="getSeverity(option.value)" />
+                            </ng-template>
+                        </p-select>
+                    </td>
+                    <td>
+                        <p-button icon="pi pi-trash" severity="danger" rounded="true" variant="text"
+                            (click)="deleteApplication(application.id)" />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

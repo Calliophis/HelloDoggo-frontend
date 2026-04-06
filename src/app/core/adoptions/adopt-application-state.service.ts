@@ -26,8 +26,14 @@ export class AdoptApplicationStateService {
   #hasMore = signal(true);
   readonly hasMore = this.#hasMore.asReadonly();
 
-  initAdoptApplications(): Observable<void> {
+  initAllAdoptApplications(): Observable<void> {
+    this.resetState();
     return this.getAllAdoptApplications();
+  }
+
+  initOwnAdoptApplications(): Observable<void> {
+    this.resetState();
+    return this.getOwnAdoptApplications();
   }
 
   getAllAdoptApplications(): Observable<void> {
