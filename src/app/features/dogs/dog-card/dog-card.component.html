@@ -2,9 +2,10 @@
 
     <ng-template #header>
         <img alt="dog image" class="h-[250px] w-[400px] rounded-t-xl object-cover" [src]="dog().imgUrl">
+
         @if (role() === 'admin' || role() === 'editor') {
         <div class="flex justify-center items-center absolute top-3 right-12 bg-white rounded-4xl w-7 h-7">
-            <button type="button" (click)="showDeleteDialog(dog(), $event)">
+            <button type="button" (click)="showDeleteDialog($event)">
                 <i class="pi pi-trash hover:text-red-600 hover:cursor-pointer"></i>
             </button>
         </div>
@@ -14,10 +15,23 @@
             </button>
         </div>
         }
+    </ng-template>
+    @if (application()) {
+    <div class="flex justify-end absolute bottom-25 right-3">
+        @if (applicationStatus() === 'pending') {
+        <p-tag value="Application sent"></p-tag>
+        }
+        @if (applicationStatus() === 'approved') {
+        <p-tag value="Application approved" severity="success"></p-tag>
+        }
+        @if (applicationStatus() === 'rejected') {
+        <p-tag value="Application rejected" severity="danger"></p-tag>
+        }
+    </div>
+    }
+    <ng-template #title>{{ dog().name }}
 
     </ng-template>
-
-    <ng-template #title>{{ dog().name }}</ng-template>
 
     <ng-template #subtitle>
         <span>

@@ -8,6 +8,7 @@ import { IntersectionObserverDirective } from '../../../shared/directives/inters
 import { DogStateService } from '../../../core/dogs/dog-state.service';
 import { CreateDogComponent } from '../create-dog/create-dog.component';
 import { DialogService } from 'primeng/dynamicdialog';
+import { AdoptApplicationStateService } from '../../../core/adoptions/adopt-application-state.service';
 
 @Component({
   selector: 'app-dog-gallery',
@@ -22,16 +23,21 @@ import { DialogService } from 'primeng/dynamicdialog';
 export class DogGalleryComponent {
   #dogStateService = inject(DogStateService);
   #authenticationStateService = inject(AuthenticationStateService);
+  #adoptApplicationStateService = inject(AdoptApplicationStateService);
   #dialogService = inject(DialogService);
 
   dogs = this.#dogStateService.dogs;
   role = this.#authenticationStateService.role;
+  adoptApplications = this.#adoptApplicationStateService.adoptApplications;
 
   isLoading = signal(false);
 
   constructor() {
     if (this.dogs().length > 0) return;
     this.isLoading.set(true);
+    if (this.#authenticationStateService.isAuthenticated()) {
+      this.#adoptApplicationStateService.getOwnAdoptApplications().pipe(takeUntilDestroyed()).subscribe();
+    }
     this.#dogStateService.initDogs().pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.isLoading.set(false);
