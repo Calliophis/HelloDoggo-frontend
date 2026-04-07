@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { editorGuard } from './core/authentication/guards/editor.guard';
 import { authenticationGuard } from './core/authentication/guards/authentication.guard';
 import { adminGuard } from './core/authentication/guards/admin.guard';
+import { editorGuard } from './core/authentication/guards/editor.guard';
 
 export const routes: Routes = [
-    
+
     {
-        path: 'auth/login', 
+        path: 'auth/login',
         loadComponent: () => import('./features/user/login/login.component').then(c => c.LoginComponent)
     },
     {
@@ -16,11 +16,6 @@ export const routes: Routes = [
     {
         path: 'dog/all',
         loadComponent: () => import('./features/dogs/dog-gallery/dog-gallery.component').then(c => c.DogGalleryComponent)
-    },
-    {
-        path: 'dog/create',
-        loadComponent: () => import('./features/dogs/create-dog/create-dog.component').then(c => c.CreateDogComponent),
-        canActivate: [editorGuard]
     },
     {
         path: 'home',
@@ -35,6 +30,16 @@ export const routes: Routes = [
         path: 'user/all',
         loadComponent: () => import('./features/user/user-list/user-list.component').then(c => c.UserListComponent),
         canActivate: [adminGuard]
+    },
+    {
+        path: 'adoption/me',
+        loadComponent: () => import('./features/adoptions/user-adoptions/user-adoptions.component').then(c => c.UserAdoptionsComponent),
+        canActivate: [authenticationGuard]
+    },
+    {
+        path: 'adoption/all',
+        loadComponent: () => import('./features/adoptions/admin-adoptions/admin-adoptions.component').then(c => c.AdminAdoptionsComponent),
+        canActivate: [editorGuard]
     },
     {
         path: '**',

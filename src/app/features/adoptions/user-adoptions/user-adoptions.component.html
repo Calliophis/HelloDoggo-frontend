@@ -1,0 +1,46 @@
+<div class="p-6 md:p-10">
+    <div class="flex items-center gap-4 mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">My Applications</h1>
+    </div>
+
+    @if (isLoading()) {
+    <div class="flex justify-center p-12">
+        <p-progress-spinner />
+    </div>
+    } @else if (applications().length === 0) {
+    <div
+        class="bg-slate-50 border border-slate-200 rounded-xl p-12 text-center text-slate-500 max-w-2xl mx-auto shadow-sm">
+        <i class="pi pi-inbox text-5xl mb-4"></i>
+        <p class="text-lg">You haven't applied for any dogs yet!</p>
+        <p class="text-sm mt-1">Visit our gallery to find your new best friend.</p>
+        <p-button routerLink="/dog/all" label="Go to Gallery" icon="pi pi-arrow-right" class="mt-6 inline-block" />
+    </div>
+    } @else {
+    <div class="rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-5xl mx-auto">
+        <p-table [value]="applications()" [rowHover]="true" styleClass="p-datatable-sm">
+            <ng-template #header>
+                <tr>
+                    <th class="uppercase tracking-wider text-xs">Dog</th>
+                    <th class="uppercase tracking-wider text-xs">Status</th>
+                    <th class="uppercase tracking-wider text-xs">Cancel</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-application>
+                <tr>
+                    <td>
+                        <span>{{ application.dog.name }}</span>
+                    </td>
+                    <td>
+                        <p-tag [value]="application.status.toUpperCase()"
+                            [severity]="getSeverity(application.status)" />
+                    </td>
+                    <td>
+                        <p-button icon="pi pi-trash" severity="danger" rounded="true" variant="text"
+                            (click)="cancelApplication(application.dogId)" />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    }
+</div>

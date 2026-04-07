@@ -1,1 +1,1 @@
-<a class="text-black no-underline" [routerLink]="url()"><ng-content /></a>
+<a class="text-black no-underline" [routerLink]="url()" (click)="navigationEvent.emit()"><ng-content /></a>

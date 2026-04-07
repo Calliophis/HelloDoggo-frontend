@@ -1,9 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { HeaderLinkComponent } from './header-link/header-link.component';
 import { AuthenticationStateService } from '../../core/authentication/services/authentication-state.service';
 
@@ -11,9 +8,6 @@ import { AuthenticationStateService } from '../../core/authentication/services/a
   selector: 'app-header',
   imports: [
     ButtonModule,
-    InputTextModule,
-    InputGroupModule,
-    InputGroupAddonModule,
     HeaderLinkComponent,
     RouterModule
   ],
@@ -21,12 +15,13 @@ import { AuthenticationStateService } from '../../core/authentication/services/a
 })
 export class HeaderComponent {
 
-  #router = inject(Router);
   #authenticationStateService = inject(AuthenticationStateService);
 
   isAuthenticated = this.#authenticationStateService.isAuthenticated;
 
   role = this.#authenticationStateService.role;
+
+  isMobileMenuOpen = signal(false);
 
   headerLinks = [
     {
@@ -35,19 +30,11 @@ export class HeaderComponent {
     },
   ]
 
-  onLogin() {
-    this.#router.navigateByUrl('/auth/login')
-  }
-
-  onSignup() {
-    this.#router.navigateByUrl('auth/signup')
+  toggleMobileMenu() {
+    this.isMobileMenuOpen.update(value => !value);
   }
 
   onLogout() {
     this.#authenticationStateService.logout();
-  }
-
-  goToHomePage() {
-    this.#router.navigateByUrl('/home');
   }
 }

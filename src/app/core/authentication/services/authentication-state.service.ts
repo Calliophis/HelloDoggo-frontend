@@ -1,28 +1,33 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, switchMap, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginDto } from '../models/login.model';
 import { SignupDto } from '../models/signup.model';
 import { UserStateService } from './user-state.service';
 import { AuthenticationApiService } from './authentication-api.service';
+import { AdoptApplicationStateService } from '../../adoptions/adopt-application-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationStateService {
-  
+
   #router = inject(Router);
   #userStateService = inject(UserStateService);
+  #adoptApplicationStateService = inject(AdoptApplicationStateService);
   #authenticationApiService = inject(AuthenticationApiService);
 
-  isAuthenticated = computed<boolean>(() => !!this.#token());
+  readonly isAuthenticated = computed<boolean>(() => !!this.#token());
   #token = signal<string | null>(null);
-  token = this.#token.asReadonly();
-  role = computed(() => this.#userStateService.user()?.role);
+  readonly token = this.#token.asReadonly();
+  readonly role = computed(() => this.#userStateService.user()?.role);
 
   initAuthentication(): Observable<void> {
     this.#updateToken();
-    return this.#userStateService.initUser();
+    if (this.#token()) {
+      return this.#userStateService.initUser();
+    }
+    return of(undefined);
   }
 
   signup(user: SignupDto): Observable<void> {
@@ -42,7 +47,7 @@ export class AuthenticationStateService {
       switchMap(loginResponse => {
         localStorage.setItem('accessToken', loginResponse.accessToken);
         this.#updateToken();
-        return this.#userStateService.initUser();
+        return this.#userStateService.initUser().pipe(switchMap(() => this.#adoptApplicationStateService.getOwnAdoptApplications()));
       }),
     );
   }
@@ -50,6 +55,8 @@ export class AuthenticationStateService {
   logout(): void {
     localStorage.removeItem('accessToken');
     this.#updateToken();
+    this.#userStateService.clearUser();
+    this.#adoptApplicationStateService.refreshOwnAdoptApplications();
     this.#router.navigateByUrl('/auth/login');
   }
 

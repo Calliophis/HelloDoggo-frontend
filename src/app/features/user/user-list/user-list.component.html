@@ -1,35 +1,53 @@
-@if (isLoading()) {
-    <p-progress-spinner></p-progress-spinner>
-}
-<p-table [value]="users()">
-    <ng-template #header>
-        <tr>
-            <th>Id</th>
-            <th>FirstName</th>
-            <th>LastName</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Delete user</th>
-        </tr>
-        
-    </ng-template>
-    <ng-template #body let-user>
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.firstName }}</td>
-            <td>{{ user.lastName }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-                <p-select appendTo="body" [options]="roles()" [disabled]="checkIfOwnRole(user.id)" [ngModel]="user.role" (onChange)="changeRole(user.id, $event.value)"></p-select>
-            </td>
-            <td><p-button type="button" icon="pi pi-trash" rounded severity="danger" variant="text" (click)="showDialog(user.id)" [disabled]="checkIfOwnRole(user.id)"></p-button></td>
-        </tr>
-    </ng-template>
-</p-table>
-@if (errorMessage()) {
-    <p-message severity="error">{{ errorMessage() }}</p-message>
-}
-@if (successMessage()) {
-    <p-message severity="success">{{ successMessage() }}</p-message>
-}
+<div class="p-6 md:p-10">
+    <div class="flex items-center gap-4 mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Manage users</h1>
+    </div>
 
+    @if (isLoading()) {
+    <div class="flex justify-center p-12">
+        <p-progress-spinner />
+    </div>
+    } @else {
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-7xl mx-auto">
+        <p-table [value]="users()" styleClass="p-datatable-sm">
+            <ng-template #header>
+                <tr>
+                    <th class="uppercase text-xs">Id
+                    </th>
+                    <th class="uppercase text-xs">
+                        FirstName</th>
+                    <th class="uppercase text-xs">
+                        LastName</th>
+                    <th class="uppercase text-xs">Email
+                    </th>
+                    <th class="uppercase text-xs">Role
+                    </th>
+                    <th class="uppercase text-xs">
+                        Delete user</th>
+                </tr>
+
+            </ng-template>
+            <ng-template #body let-user>
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.firstName }}</td>
+                    <td>{{ user.lastName }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <p-select appendTo="body" [options]="roles()" [disabled]="checkIfOwnRole(user.id)"
+                            [ngModel]="user.role" (onChange)="changeRole(user.id, $event.value)"></p-select>
+                    </td>
+                    <td><p-button type="button" icon="pi pi-trash" rounded severity="danger" variant="text"
+                            (click)="showDialog(user.id)" [disabled]="checkIfOwnRole(user.id)"></p-button></td>
+                </tr>
+            </ng-template>
+        </p-table>
+        @if (errorMessage()) {
+        <p-message severity="error">{{ errorMessage() }}</p-message>
+        }
+        @if (successMessage()) {
+        <p-message severity="success">{{ successMessage() }}</p-message>
+        }
+    </div>
+    }
+</div>
