@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { map, Observable, of, switchMap, forkJoin } from 'rxjs';
+import { map, Observable, of, switchMap, forkJoin, catchError } from 'rxjs';
 import { AdoptApplicationApiService } from './adopt-application-api.service';
 import { AdoptApplication } from './models/adopt-application.model';
 import { PaginationDto } from '../../shared/models/pagination.model';
@@ -111,8 +111,16 @@ export class AdoptApplicationStateService {
     const application = this.#findAdoptApplication(dogId);
     if (!application) return of(undefined);
 
+    const previous = this.#ownApplications();
+
+    this.#ownApplications.update(current => current.filter(app => app.id !== application.id));
+
     return this.#apiService.deleteOwnAdoptApplication(application.id).pipe(
-      switchMap(() => this.#refreshAfterMutation())
+      map(() => undefined),
+      catchError(() => {
+        this.#ownApplications.set(previous);
+        return of(undefined);
+      })
     );
   }
 

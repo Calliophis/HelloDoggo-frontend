@@ -58,6 +58,10 @@ export class UserAdoptionsComponent {
   }
 
   cancelApplication(dogId: string): void {
-    this.#adoptState.deleteOwnAdoptApplication(dogId).subscribe();
+    this.isLoading.set(true);
+    this.#adoptState.deleteOwnAdoptApplication(dogId).subscribe({
+      next: () => this.isLoading.set(false),
+      error: () => this.isLoading.set(false)
+    });
   }
 }
