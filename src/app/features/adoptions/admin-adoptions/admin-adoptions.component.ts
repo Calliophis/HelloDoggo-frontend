@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -9,6 +9,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AdoptApplicationStateService } from '../../../core/adoptions/adopt-application-state.service';
 import { Status } from '../../../core/adoptions/models/status.type';
 import { AdoptApplication } from '../../../core/adoptions/models/adopt-application.model';
+import { DialogService } from 'primeng/dynamicdialog';
+import { DeleteDialogComponent } from '../../user/components/delete-dialog/delete-dialog.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-admin-adoptions',
@@ -18,6 +21,9 @@ import { AdoptApplication } from '../../../core/adoptions/models/adopt-applicati
 })
 export class AdminAdoptionsComponent {
   #adoptState = inject(AdoptApplicationStateService);
+  #dialogService = inject(DialogService);
+  #destroyRef = inject(DestroyRef);
+
   applications = this.#adoptState.adoptApplications;
 
   isLoading = signal(false);
@@ -63,6 +69,22 @@ export class AdminAdoptionsComponent {
 
   updateStatus(id: string, status: Status): void {
     this.#adoptState.updateAdoptApplication(id, { status }).subscribe();
+  }
+
+  showDeleteDialog(id: string): void {
+    const deleteRef = this.#dialogService.open(DeleteDialogComponent, {
+      header: 'Are you sure?',
+      width: '20rem',
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true
+    });
+
+    deleteRef?.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
+      if (confirmed) {
+        this.deleteApplication(id);
+      }
+    });
   }
 
   deleteApplication(id: string): void {

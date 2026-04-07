@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
@@ -6,6 +6,9 @@ import { AdoptApplicationStateService } from '../../../core/adoptions/adopt-appl
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { DialogService } from 'primeng/dynamicdialog';
+import { DeleteDialogComponent } from '../../user/components/delete-dialog/delete-dialog.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-user-adoptions',
@@ -15,6 +18,8 @@ import { RouterLink } from '@angular/router';
 })
 export class UserAdoptionsComponent {
   #adoptState = inject(AdoptApplicationStateService);
+  #dialogService = inject(DialogService);
+  #destroyRef = inject(DestroyRef);
 
   applications = this.#adoptState.ownApplications;
   isLoading = signal(false);
@@ -27,8 +32,6 @@ export class UserAdoptionsComponent {
     });
   }
 
-
-
   getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
     switch (status) {
       case 'approved': return 'success';
@@ -36,6 +39,22 @@ export class UserAdoptionsComponent {
       case 'rejected': return 'danger';
       default: return 'info';
     }
+  }
+
+  showDeleteDialog(dogId: string): void {
+    const deleteRef = this.#dialogService.open(DeleteDialogComponent, {
+      header: 'Are you sure?',
+      width: '20rem',
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true
+    });
+
+    deleteRef?.onClose.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((confirmed) => {
+      if (confirmed) {
+        this.cancelApplication(dogId);
+      }
+    });
   }
 
   cancelApplication(dogId: string): void {

@@ -1,16 +1,18 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { map, Observable, of, switchMap, forkJoin } from 'rxjs';
 import { AdoptApplicationApiService } from './adopt-application-api.service';
 import { AdoptApplication } from './models/adopt-application.model';
 import { PaginationDto } from '../../shared/models/pagination.model';
-import { map, Observable, of, switchMap } from 'rxjs';
 import { UpdateAdoptApplicationStatusDto } from './models/update-adopt-application-status.model';
 import { CreateAdoptApplicationDto } from './models/create-adopt-application.model';
+import { UserStateService } from '../authentication/services/user-state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdoptApplicationStateService {
   #apiService = inject(AdoptApplicationApiService);
+  #userState = inject(UserStateService);
 
   #adoptApplication = signal<AdoptApplication | null>(null);
   readonly adoptApplication = this.#adoptApplication.asReadonly();
@@ -44,7 +46,7 @@ export class AdoptApplicationStateService {
 
   getAllAdoptApplications(): Observable<void> {
     return this.#apiService.getAllAdoptApplications(this.#pagination()).pipe(
-      map(res => this.applyPage(res, 'all'))
+      map(res => this.#handleResponse(res, 'all'))
     );
   }
 
@@ -59,7 +61,7 @@ export class AdoptApplicationStateService {
   }
 
   loadMoreAdoptApplications(): Observable<void> {
-    this.incrementPagination();
+    this.#incrementPagination();
     return this.getAllAdoptApplications();
   }
 
@@ -71,56 +73,69 @@ export class AdoptApplicationStateService {
 
   getAdoptApplicationsByDogId(dogId: string): Observable<void> {
     return this.#apiService.getAdoptApplicationsByDogId(this.#pagination(), dogId).pipe(
-      map(res => this.applyPage(res, 'all'))
+      map(res => this.#handleResponse(res, 'all'))
     );
   }
 
   getAdoptApplicationsByUserId(userId: string): Observable<void> {
     return this.#apiService.getAdoptApplicationsByUserId(this.#pagination(), userId).pipe(
-      map(res => this.applyPage(res, 'all'))
+      map(res => this.#handleResponse(res, 'all'))
     );
   }
 
   getOwnAdoptApplications(): Observable<void> {
     return this.#apiService.getOwnAdoptApplications(this.#pagination()).pipe(
-      map(res => this.applyPage(res, 'own'))
+      map(res => this.#handleResponse(res, 'own'))
     );
   }
 
   createAdoptApplication(createDto: CreateAdoptApplicationDto): Observable<void> {
     return this.#apiService.createAdoptApplication(createDto).pipe(
-      switchMap(() => this.refreshOwnAdoptApplications())
+      switchMap(() => this.#refreshAfterMutation())
     );
   }
 
   updateAdoptApplication(id: string, updateDto: UpdateAdoptApplicationStatusDto): Observable<void> {
     return this.#apiService.updateAdoptApplication(id, updateDto).pipe(
-      switchMap(() => this.refreshAllAdoptApplications())
+      switchMap(() => this.#refreshAfterMutation())
     );
   }
 
   deleteAdoptApplication(id: string): Observable<void> {
     return this.#apiService.deleteAdoptApplication(id).pipe(
-      switchMap(() => this.refreshAllAdoptApplications())
+      switchMap(() => this.#refreshAfterMutation())
     );
   }
 
   deleteOwnAdoptApplication(dogId: string): Observable<void> {
-    const application = this.findAdoptApplication(dogId);
-    if (!application) {
-      return of(undefined);
-    }
+    const application = this.#findAdoptApplication(dogId);
+    if (!application) return of(undefined);
+
     return this.#apiService.deleteOwnAdoptApplication(application.id).pipe(
-      switchMap(() => this.refreshOwnAdoptApplications())
+      switchMap(() => this.#refreshAfterMutation())
     );
   }
 
-  private applyPage(res: { adoptApplications: AdoptApplication[]; totalAdoptApplications: number }, store: 'all' | 'own'): void {
-    this.appendItems(res.adoptApplications, store);
-    this.updateHasMore(res.totalAdoptApplications);
+  #refreshAfterMutation(): Observable<void> {
+    const role = this.#userState.user()?.role;
+    const isAdminView = role === 'admin' || role === 'editor';
+
+    const tasks: Observable<void>[] = [this.refreshOwnAdoptApplications()];
+    if (isAdminView) {
+      tasks.push(this.refreshAllAdoptApplications());
+    }
+
+    return forkJoin(tasks).pipe(map(() => undefined));
   }
 
-  private appendItems(newItems: AdoptApplication[], store: 'all' | 'own'): void {
+  #handleResponse(res: { adoptApplications: AdoptApplication[]; totalAdoptApplications: number }, store: 'all' | 'own'): void {
+    this.#appendItems(res.adoptApplications, store);
+    if (store === 'all') {
+      this.#updateHasMore(res.totalAdoptApplications);
+    }
+  }
+
+  #appendItems(newItems: AdoptApplication[], store: 'all' | 'own'): void {
     if (store === 'all') {
       this.#adoptApplications.update(current => [...current, ...newItems]);
     } else {
@@ -128,7 +143,7 @@ export class AdoptApplicationStateService {
     }
   }
 
-  private updateHasMore(total: number): void {
+  #updateHasMore(total: number): void {
     if (this.#adoptApplications().length >= total) {
       this.#hasMore.set(false);
     }
@@ -147,14 +162,14 @@ export class AdoptApplicationStateService {
     this.#ownApplications.set([]);
   }
 
-  private incrementPagination(): void {
+  #incrementPagination(): void {
     this.#pagination.update(pagination => ({
       ...pagination,
       skip: pagination.skip + pagination.take,
     }));
   }
 
-  private findAdoptApplication(dogId: string): AdoptApplication | null {
+  #findAdoptApplication(dogId: string): AdoptApplication | null {
     return this.#ownApplications().find(application => application.dog.id === dogId) || null;
   }
 }
