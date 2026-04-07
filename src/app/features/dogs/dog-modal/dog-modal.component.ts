@@ -34,6 +34,7 @@ export class DogModalComponent {
 
   dog = signal<Dog>(this.config.data.dog);
   application = computed(() => this.#adoptApplicationStateService.ownApplications().find(application => application.dog.id === this.dog().id) || null);
+  isLoading = signal<boolean>(false);
 
   close(): void {
     this.ref.close();
@@ -45,10 +46,12 @@ export class DogModalComponent {
       this.ref.close();
       return;
     }
+    this.isLoading.set(true);
     this.#adoptApplicationStateService.createAdoptApplication({ dogId: id }).subscribe({
       next: () => {
         this.ref.close();
-      }
+      },
+      error: () => this.isLoading.set(false)
     });
   }
 
@@ -69,10 +72,13 @@ export class DogModalComponent {
   }
 
   cancelApplication(): void {
+    this.isLoading.set(true);
     this.#adoptApplicationStateService.deleteOwnAdoptApplication(this.dog().id).subscribe({
       next: () => {
+        this.isLoading.set(false);
         this.deleteRef()?.close();
-      }
+      },
+      error: () => this.isLoading.set(false)
     });
   }
 }

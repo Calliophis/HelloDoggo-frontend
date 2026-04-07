@@ -1,5 +1,5 @@
 <main class="flex flex-col items-left">
-    <div class="flex justify-between items-center mx-25 my-10">
+    <div class="flex justify-between items-center mx-5 md:mx-25 my-10">
         <h1>
             <span class="text-3xl font-bold">Behold</span>
             <br>
@@ -11,8 +11,8 @@
         </h1>
 
         @if (role() === 'editor' || role() === 'admin') {
-        <p-button type="button" label="Add new dog" (click)="showCreateDogDialog()" [loading]="isLoading()">
-            <i class="pi pi-plus" pButtonIcon></i>
+        <p-button icon="pi pi-plus" type="button" (click)="showCreateDogDialog()" [loading]="isLoading()"
+            [rounded]="true" size="large">
         </p-button>
         }
 
