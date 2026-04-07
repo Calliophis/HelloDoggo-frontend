@@ -28,7 +28,7 @@
             <ng-template #body let-application>
                 <tr>
                     <td>
-                        <span>{{ getDogName(application.dogId) }}</span>
+                        <span>{{ application.dog.name }}</span>
                     </td>
                     <td>
                         <p-tag [value]="application.status.toUpperCase()"

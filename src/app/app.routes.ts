@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authenticationGuard } from './core/authentication/guards/authentication.guard';
 import { adminGuard } from './core/authentication/guards/admin.guard';
+import { editorGuard } from './core/authentication/guards/editor.guard';
 
 export const routes: Routes = [
 
@@ -38,7 +39,7 @@ export const routes: Routes = [
     {
         path: 'adoption/all',
         loadComponent: () => import('./features/adoptions/admin-adoptions/admin-adoptions.component').then(c => c.AdminAdoptionsComponent),
-        canActivate: [adminGuard]
+        canActivate: [editorGuard]
     },
     {
         path: '**',

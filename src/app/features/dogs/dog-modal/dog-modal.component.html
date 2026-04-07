@@ -33,7 +33,7 @@
             </div>
         </p-scrollpanel>
 
-        @if (hasApplied()) {
+        @if (application()) {
         <p-button type="button" (click)="showDeleteDialog()" label="Cancel application" styleClass="w-full"
             severity="danger" icon="pi pi-trash" size="large">
         </p-button>

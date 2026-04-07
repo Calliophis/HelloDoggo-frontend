@@ -28,7 +28,7 @@ export class DogGalleryComponent {
 
   dogs = this.#dogStateService.dogs;
   role = this.#authenticationStateService.role;
-  adoptApplications = this.#adoptApplicationStateService.adoptApplications;
+  applications = this.#adoptApplicationStateService.ownApplications;
 
   isLoading = signal(false);
 
@@ -36,7 +36,7 @@ export class DogGalleryComponent {
     if (this.dogs().length > 0) return;
     this.isLoading.set(true);
     if (this.#authenticationStateService.isAuthenticated()) {
-      this.#adoptApplicationStateService.getOwnAdoptApplications().pipe(takeUntilDestroyed()).subscribe();
+      this.#adoptApplicationStateService.initOwnAdoptApplications().pipe(takeUntilDestroyed()).subscribe();
     }
     this.#dogStateService.initDogs().pipe(takeUntilDestroyed()).subscribe({
       next: () => {

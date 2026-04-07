@@ -36,7 +36,7 @@ export class DogCardComponent {
   dog = input.required<Dog>();
   role = this.#authenticationStateService.role;
   isLoading = signal(false);
-  application = computed(() => this.#adoptApplicationStateService.adoptApplications().find(application => application.dogId === this.dog().id) || null);
+  application = computed(() => this.#adoptApplicationStateService.ownApplications().find(application => application.dog.id === this.dog().id) || null);
   applicationStatus = computed(() => this.application()?.status ?? null);
 
   showUpdateDialog(dog: Dog, event: Event) {

@@ -2,7 +2,7 @@ import { Status } from "./status.type";
 
 export interface AdoptApplication {
     id: string;
-    dogId: string;
-    userId: string;
+    dog: { id: string, name: string };
+    user: { id: string, firstName: string, lastName: string, email: string };
     status: Status;
 }

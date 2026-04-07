@@ -33,10 +33,7 @@ export class DogModalComponent {
   #router = inject(Router);
 
   dog = signal<Dog>(this.config.data.dog);
-  hasApplied = computed(() => {
-    const dogId = this.dog().id;
-    return this.#adoptApplicationStateService.adoptApplications().some(applications => applications.dogId === dogId);
-  });
+  application = computed(() => this.#adoptApplicationStateService.ownApplications().find(application => application.dog.id === this.dog().id) || null);
 
   close(): void {
     this.ref.close();

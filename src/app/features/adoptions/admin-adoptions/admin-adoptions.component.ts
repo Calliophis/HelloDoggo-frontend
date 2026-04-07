@@ -7,8 +7,6 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AdoptApplicationStateService } from '../../../core/adoptions/adopt-application-state.service';
-import { DogStateService } from '../../../core/dogs/dog-state.service';
-import { UserStateService } from '../../../core/authentication/services/user-state.service';
 import { Status } from '../../../core/adoptions/models/status.type';
 import { AdoptApplication } from '../../../core/adoptions/models/adopt-application.model';
 
@@ -20,12 +18,7 @@ import { AdoptApplication } from '../../../core/adoptions/models/adopt-applicati
 })
 export class AdminAdoptionsComponent {
   #adoptState = inject(AdoptApplicationStateService);
-  #dogState = inject(DogStateService);
-  #userState = inject(UserStateService);
-
   applications = this.#adoptState.adoptApplications;
-  dogs = this.#dogState.dogs;
-  users = this.#userState.users;
 
   isLoading = signal(false);
   selectedDogId = signal<string | null>(null);
@@ -44,17 +37,6 @@ export class AdminAdoptionsComponent {
   loadInitialData(): void {
     this.isLoading.set(true);
     this.#adoptState.initAllAdoptApplications().subscribe(() => this.isLoading.set(false));
-    this.#dogState.initDogs().subscribe();
-    this.#userState.getAllUsers().subscribe();
-  }
-
-  getDogName(dogId: string): string {
-    return this.dogs().find(d => d.id === dogId)?.name || 'Unknown Dog';
-  }
-
-  getUserName(userId: string): string {
-    const user = this.users().find(u => u.id === userId);
-    return user ? `${user.firstName} ${user.lastName}` : 'Unknown User';
   }
 
   getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
@@ -67,11 +49,11 @@ export class AdminAdoptionsComponent {
   }
 
   isDogAlreadyApproved(dogId: string, currentId: string): boolean {
-    return this.applications().some(application => application.dogId === dogId && application.id !== currentId && application.status === 'approved');
+    return this.applications().some(application => application.dog.id === dogId && application.id !== currentId && application.status === 'approved');
   }
 
   getFilteredStatusOptions(application: AdoptApplication) {
-    const isAlreadyApproved = this.isDogAlreadyApproved(application.dogId, application.id);
+    const isAlreadyApproved = this.isDogAlreadyApproved(application.dog.id, application.id);
 
     return this.statusOptions.map(option => ({
       ...option,

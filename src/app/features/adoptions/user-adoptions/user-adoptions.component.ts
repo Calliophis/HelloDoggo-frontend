@@ -3,7 +3,6 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { AdoptApplicationStateService } from '../../../core/adoptions/adopt-application-state.service';
-import { DogStateService } from '../../../core/dogs/dog-state.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -16,9 +15,8 @@ import { RouterLink } from '@angular/router';
 })
 export class UserAdoptionsComponent {
   #adoptState = inject(AdoptApplicationStateService);
-  #dogState = inject(DogStateService);
 
-  applications = this.#adoptState.adoptApplications;
+  applications = this.#adoptState.ownApplications;
   isLoading = signal(false);
 
   constructor() {
@@ -27,12 +25,9 @@ export class UserAdoptionsComponent {
       next: () => this.isLoading.set(false),
       error: () => this.isLoading.set(false)
     });
-    this.#dogState.initDogs().subscribe();
   }
 
-  getDogName(dogId: string): string {
-    return this.#dogState.dogs().find(dog => dog.id === dogId)?.name || 'Unknown Dog';
-  }
+
 
   getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
     switch (status) {
